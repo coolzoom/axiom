@@ -25,6 +25,7 @@
 using Axiom.Core;
 using Axiom.Animating;
 using Axiom.Math;
+using System.IO;
 
 namespace Axiom.Samples.CameraTrack
 {
@@ -73,8 +74,42 @@ namespace Axiom.Samples.CameraTrack
             SceneManager.SetSkyBox(true, "Examples/MorningSkyBox", 5000);
             // create an ogre head entity and attach it to a node
             Entity head = SceneManager.CreateEntity("Head", "ogrehead.mesh");
+
             SceneNode headNode = SceneManager.RootSceneNode.CreateChildSceneNode();
             headNode.AttachObject(head);
+
+            //for (int i = 1; i < 5000; i++)
+            //{
+            //    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "ogrehead.mesh");
+
+            //    SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
+            //    headNodesub.AttachObject(headsub);
+            //    //headNodesub.Translate = new Vector3(200, 0, 0);
+            //    headNodesub.Position = new Vector3(i, 0, 0);
+            //}
+
+
+            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data2.csv");
+
+            for (int i = 1; i < content.Length; i++)
+            {
+                string[] l = content[i].Split(',');
+                if (l.Length == 3)
+                {
+
+                    float x = float.Parse(l[0]) * 100 ;
+                    float y = float.Parse(l[1]) * 100;
+                    float z = float.Parse(l[2]) * 10000;
+                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "ogrehead.mesh");
+
+                    SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
+                    headNodesub.AttachObject(headsub);
+                    //headNodesub.Translate = new Vector3(200, 0, 0);
+                    headNodesub.Position = new Vector3(y, z, x);
+
+                }
+            }
+
             CameraManager.setStyle(CameraStyle.Manual);
             // we will be controlling the camera ourselves, so disable the camera man
             Camera.SetAutoTracking(true, headNode); // make the camera face the head

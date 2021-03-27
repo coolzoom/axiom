@@ -100,6 +100,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Samples\Axiom.Samples.Browser.Shared\Axiom.Samples.Browser.Shared.projitems*{030635e3-646d-4fe9-9857-8659c46ce1ba}*SharedItemsImports = 13
+		Samples\Axiom.Samples.Browser.Shared\Axiom.Samples.Browser.Shared.projitems*{0f73b59a-4204-4bd7-a9c0-d53c1a62f84f}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

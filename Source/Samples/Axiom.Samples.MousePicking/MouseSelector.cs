@@ -31,6 +31,7 @@ using Axiom.Math;
 using Axiom.Graphics;
 using Axiom.Animating;
 using Axiom.Math.Collections;
+using System.Windows.Forms;
 
 namespace Axiom.Samples.MousePicking
 {
@@ -256,6 +257,7 @@ namespace Axiom.Samples.MousePicking
             if (!this.Selection.Contains(obj))
             {
                 Log("MouseSelector: " + this._name + " selecting object " + obj.Name);
+                MessageBox.Show(obj.Name);
                 obj.ParentSceneNode.ShowBoundingBox = true;
                 this.Selection.Add(obj);
             }

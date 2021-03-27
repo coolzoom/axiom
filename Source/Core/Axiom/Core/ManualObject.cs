@@ -517,6 +517,10 @@ namespace Axiom.Core
             this.AABB = AxisAlignedBox.Null;
             this.edgeList = null;
             this.anyIndexed = false;
+            if(this.shadowRenderables == null)
+            {
+                return;
+            }
             foreach (var item in this.shadowRenderables)
             {
                 item.Dispose();

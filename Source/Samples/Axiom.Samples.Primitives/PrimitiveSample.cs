@@ -107,6 +107,15 @@ namespace Axiom.Samples.Primitives
             linep2pNode.AttachObject(this._linep2p);
             triNode.AttachObject(this._tri);
 
+            //Sphere s = new Sphere(new Vector3(0, 0, 0), 10);
+            //var sNode = node.CreateChildSceneNode();
+            //sNode.AttachObject(s);
+
+            MovableText mt = new MovableText("test", "test", "SdkTrays/Caption");
+            var tNode = node.CreateChildSceneNode();
+            tNode.AttachObject(mt);
+            tNode.Scale = new Vector3(2,2,2);
+            tNode.Position = new Vector3(2, 2, 2);
             //for (int i = 1; i < 5000; i++)
             //{ 
             //    Line3d l = new Line3d(new Vector3(i, 0, 30), Vector3.UnitY, 50, ColorEx.Blue);

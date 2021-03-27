@@ -33,6 +33,7 @@
 
 #region Namespace Declarations
 
+using System.IO;
 using Axiom.Core;
 using Axiom.Math;
 using Axiom.ParticleSystems;
@@ -88,6 +89,29 @@ namespace Axiom.Samples.ParticleFX
             // create an ogre head entity and place it at the origin
             Entity ent = SceneManager.CreateEntity("Head", "ogrehead.mesh");
             SceneManager.RootSceneNode.AttachObject(ent);
+
+
+            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data2.csv");
+
+            for (int i = 1; i < content.Length; i++)
+            {
+                string[] l = content[i].Split(',');
+                if (l.Length == 3)
+                {
+
+                    float x = float.Parse(l[0]) * 100;
+                    float y = float.Parse(l[1]) * 100;
+                    float z = float.Parse(l[2]) * 10000;
+                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "ogrehead.mesh");
+
+                    SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
+                    headNodesub.AttachObject(headsub);
+                    //headNodesub.Translate = new Vector3(200, 0, 0);
+                    headNodesub.Position = new Vector3(y, z, x);
+
+                }
+            }
+
 
             SetupParticles();
             SetupTogglers();

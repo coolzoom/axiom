@@ -46,6 +46,7 @@ namespace Axiom.Samples.Primitives
     public class PrimitivesSample : SdkSample
     {
         private Vector4 _color = new Vector4(1, 0, 0, 1);
+        private Line3dp2p _linep2p;
         private Line3d _line;
         private Triangle _tri;
 
@@ -89,17 +90,21 @@ namespace Axiom.Samples.Primitives
             // create a 3d line
             this._line = new Line3d(new Vector3(0, 0, 30), Vector3.UnitY, 50, ColorEx.Blue);
 
+            this._linep2p = new Line3dp2p(new Vector3(0, 0, 10), new Vector3(0, 0, 30), ColorEx.Blue);
+
             this._tri = new Triangle(new Vector3(-25, 0, 0), new Vector3(0, 50, 0), new Vector3(25, 0, 0), ColorEx.Red,
                                       ColorEx.Blue, ColorEx.Green);
 
             // create a node for the line
             var node = SceneManager.RootSceneNode.CreateChildSceneNode();
             var lineNode = node.CreateChildSceneNode();
+            var linep2pNode = node.CreateChildSceneNode();
             var triNode = node.CreateChildSceneNode();
             triNode.Position = new Vector3(50, 0, 0);
 
             // add the line and triangle to the scene
             lineNode.AttachObject(this._line);
+            linep2pNode.AttachObject(this._linep2p);
             triNode.AttachObject(this._tri);
 
             // create a node rotation controller value, which will mark the specified scene node as a target of the rotation
@@ -247,6 +252,118 @@ namespace Axiom.Samples.Primitives
             }
         }
     };
+
+    /// <summary>
+    ///	A class for rendering lines in 3d.
+    /// </summary>
+    public class Line3dp2p : SimpleRenderable
+    {
+        // constants for buffer source bindings
+        private const int POSITION = 0;
+        private const int COLOR = 1;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="startPoint">Point where the line will start.</param>
+        /// <param name="endPoint">Point where the line will end.</param>
+        /// <param name="color">The color which this line should be.</param>
+        public Line3dp2p(Vector3 startPoint, Vector3 endPoint, ColorEx color)
+        {
+
+            vertexData = new VertexData();
+            renderOperation.vertexData = vertexData;
+            renderOperation.vertexData.vertexCount = 2;
+            renderOperation.vertexData.vertexStart = 0;
+            renderOperation.indexData = null;
+            renderOperation.operationType = OperationType.LineList;
+            renderOperation.useIndices = false;
+
+            var decl = vertexData.vertexDeclaration;
+            var binding = vertexData.vertexBufferBinding;
+
+            // add a position and color element to the declaration
+            decl.AddElement(POSITION, 0, VertexElementType.Float3, VertexElementSemantic.Position);
+            decl.AddElement(COLOR, 0, VertexElementType.Color, VertexElementSemantic.Diffuse);
+
+            // create a vertex buffer for the position
+            var buffer = HardwareBufferManager.Instance.CreateVertexBuffer(decl.Clone(POSITION), vertexData.vertexCount,
+                                                                            BufferUsage.StaticWriteOnly);
+            var pos = new Vector3[]
+                      {
+                          startPoint, endPoint
+                      };
+
+            // write the data to the position buffer
+            buffer.WriteData(0, buffer.Size, pos, true);
+
+            // bind the position buffer
+            binding.SetBinding(POSITION, buffer);
+
+            // create a color buffer
+            buffer = HardwareBufferManager.Instance.CreateVertexBuffer(decl.Clone(COLOR), vertexData.vertexCount,
+                                                                        BufferUsage.StaticWriteOnly);
+
+            var colorValue = Root.Instance.RenderSystem.ConvertColor(color);
+
+            var colors = new int[]
+                         {
+                             colorValue, colorValue
+                         };
+
+            // write the data to the position buffer
+            buffer.WriteData(0, buffer.Size, colors, true);
+
+            // bind the color buffer
+            binding.SetBinding(COLOR, buffer);
+
+            // MATERIAL
+            // grab a copy of the BaseWhite material for our use
+            var material = (Material)MaterialManager.Instance.GetByName("BaseWhite");
+            material = material.Clone("LineMatp2p");
+            // disable lighting to vertex colors are used
+            material.Lighting = false;
+            // set culling to none so the triangle is drawn 2 sided
+            material.CullingMode = CullingMode.None;
+
+            Material = material;
+
+            // set the bounding box of the line
+            box = new AxisAlignedBox(startPoint, endPoint);
+        }
+        protected override void dispose(bool disposeManagedResources)
+        {
+            if (!IsDisposed)
+            {
+                if (disposeManagedResources)
+                {
+                    MaterialManager.Instance.Remove(Material);
+                }
+            }
+
+            base.dispose(disposeManagedResources);
+        }
+
+        public override Real GetSquaredViewDepth(Camera camera)
+        {
+            Vector3 min, max, mid, dist;
+            min = box.Minimum;
+            max = box.Maximum;
+            mid = ((min - max) * 0.5f) + min;
+            dist = camera.DerivedPosition - mid;
+
+            return dist.LengthSquared;
+        }
+
+        public override Real BoundingRadius
+        {
+            get
+            {
+                return 0;
+            }
+        }
+    };
+
 
     /// <summary>
     ///	A class for rendering a simple triangle with colored vertices.

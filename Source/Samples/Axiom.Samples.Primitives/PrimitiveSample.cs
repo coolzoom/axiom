@@ -107,6 +107,14 @@ namespace Axiom.Samples.Primitives
             linep2pNode.AttachObject(this._linep2p);
             triNode.AttachObject(this._tri);
 
+            //for (int i = 1; i < 5000; i++)
+            //{ 
+            //    Line3d l = new Line3d(new Vector3(i, 0, 30), Vector3.UnitY, 50, ColorEx.Blue);
+            //    var ln = node.CreateChildSceneNode();
+            //    ln.AttachObject(l);
+            //}
+
+
             // create a node rotation controller value, which will mark the specified scene node as a target of the rotation
             // we want to rotate along the Y axis for the triangle and Z for the line (just for the hell of it)
             var rotate = new NodeRotationControllerValue(triNode, Vector3.UnitY);
@@ -208,7 +216,7 @@ namespace Axiom.Samples.Primitives
             // MATERIAL
             // grab a copy of the BaseWhite material for our use
             var material = (Material)MaterialManager.Instance.GetByName("BaseWhite");
-            material = material.Clone("LineMat");
+            //material = material.Clone("LineMat");
             // disable lighting to vertex colors are used
             material.Lighting = false;
             // set culling to none so the triangle is drawn 2 sided

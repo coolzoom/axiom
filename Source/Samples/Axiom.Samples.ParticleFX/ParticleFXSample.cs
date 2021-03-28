@@ -192,15 +192,15 @@ namespace Axiom.Samples.ParticleFX
             box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Fountain2", "Fountain B", 130);
             box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
             box.IsChecked = true;
-            box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Aureola", "Aureola", 130);
-            box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
-            box.IsChecked = false;
-            box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Nimbus", "Nimbus", 130);
-            box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
-            box.IsChecked = false;
-            box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Rain", "Rain", 130);
-            box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
-            box.IsChecked = false;
+            //box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Aureola", "Aureola", 130);
+            //box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
+            //box.IsChecked = false;
+            //box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Nimbus", "Nimbus", 130);
+            //box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
+            //box.IsChecked = false;
+            //box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Rain", "Rain", 130);
+            //box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
+            //box.IsChecked = false;
             SampleSliderX = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomX", "zoomX", 250, 80,
                                                             1, 100, 100);
             SampleSliderX.SetValue(1,false);

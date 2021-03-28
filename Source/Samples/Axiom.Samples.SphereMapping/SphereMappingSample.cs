@@ -28,7 +28,7 @@ namespace Axiom.Samples.SphereMapping
             TrayManager.ShowCursor();
 
             // create our model, give it the environment mapped material, and place it at the origin
-            Entity ent = SceneManager.CreateEntity("Head", "ogrehead.mesh");
+            Entity ent = SceneManager.CreateEntity("Head", "sphere.mesh");
             ent.MaterialName = "Examples/SphereMappedRustySteel";
             SceneManager.RootSceneNode.AttachObject(ent);
         }

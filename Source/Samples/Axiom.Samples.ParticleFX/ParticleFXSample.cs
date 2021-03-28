@@ -33,6 +33,7 @@
 
 #region Namespace Declarations
 
+using System.Collections.Generic;
 using System.IO;
 using Axiom.Core;
 using Axiom.Math;
@@ -45,6 +46,12 @@ namespace Axiom.Samples.ParticleFX
     public class ParticleFXSample : SdkSample
     {
         protected SceneNode fountainPivot;
+
+        private Dictionary<string, SceneNode> dictnode;
+        private Dictionary<string, Vector3> dictOriginalPosition;
+        private Slider SampleSliderX;
+        private Slider SampleSliderY;
+        private Slider SampleSliderZ;
 
         [OgreVersion(1, 7, 2)]
         public ParticleFXSample()
@@ -72,6 +79,7 @@ namespace Axiom.Samples.ParticleFX
             {
                 ParticleSystemManager.Instance.ParticleSystems[hash].IsVisible = sender.IsChecked;
             }
+
         }
 
         [OgreVersion(1, 7, 2)]
@@ -91,8 +99,10 @@ namespace Axiom.Samples.ParticleFX
             SceneManager.RootSceneNode.AttachObject(ent);
 
 
-            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data2.csv");
+            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv");
 
+            dictnode = new Dictionary<string, SceneNode> { };
+            dictOriginalPosition = new Dictionary<string, Vector3>();
             for (int i = 1; i < content.Length; i++)
             {
                 string[] l = content[i].Split(',');
@@ -102,12 +112,17 @@ namespace Axiom.Samples.ParticleFX
                     float x = float.Parse(l[0]) * 100;
                     float y = float.Parse(l[1]) * 100;
                     float z = float.Parse(l[2]) * 10000;
-                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "ogrehead.mesh");
 
+                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "ogrehead.mesh");
+                    Vector3 v = new Vector3(y, z, x);
+                    dictOriginalPosition.Add("Head" + i.ToString(), v);
                     SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
                     headNodesub.AttachObject(headsub);
                     //headNodesub.Translate = new Vector3(200, 0, 0);
-                    headNodesub.Position = new Vector3(y, z, x);
+
+                    headNodesub.Position = dictOriginalPosition["Head" + i.ToString()];
+
+                    dictnode.Add("Head" + i.ToString(), headNodesub);
 
                 }
             }
@@ -186,6 +201,31 @@ namespace Axiom.Samples.ParticleFX
             box = TrayManager.CreateCheckBox(TrayLocation.TopLeft, "Rain", "Rain", 130);
             box.CheckChanged += new CheckChangedHandler(_checkBoxToggled);
             box.IsChecked = false;
+            SampleSliderX = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomX", "zoomX", 250, 80,
+                                                            1, 100, 100);
+            SampleSliderX.SetValue(1,false);
+            SampleSliderX.SliderMoved += new SliderMovedHandler(_slidermoved);
+            SampleSliderY = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomY", "zoomY", 250, 80,
+                                                            1, 100, 100);
+            SampleSliderY.SetValue(1, false);
+            SampleSliderY.SliderMoved += new SliderMovedHandler(_slidermoved);
+            SampleSliderZ = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomZ", "zoomZ", 250, 80,
+                                                          1, 100, 100);
+            SampleSliderZ.SetValue(1, false);
+            SampleSliderZ.SliderMoved += new SliderMovedHandler(_slidermoved);
         }
-    };
+
+        private void _slidermoved(object sender, Slider slider)
+        {
+            //slider.ValueCaption = slider.Value.ToString();
+
+            foreach (var n in dictnode)
+            {
+                Vector3 np = new Vector3(dictOriginalPosition[n.Key].x * SampleSliderX.Value, dictOriginalPosition[n.Key].y * SampleSliderY.Value, dictOriginalPosition[n.Key].z * SampleSliderZ.Value);
+
+                n.Value.Position = np;
+            }
+
+        }
+    }
 }

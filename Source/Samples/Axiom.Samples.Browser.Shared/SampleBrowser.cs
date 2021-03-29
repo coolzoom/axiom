@@ -238,45 +238,45 @@ namespace Axiom.Samples
                     RunSample(null);
                 }
             }
-            //else if (b.Name == "UnloadReload") // unload or reload sample plugins and update controls
-            //{
-            //    if (b.Caption == "Unload Samples")
-            //    {
-            //        if (CurrentSample != null)
-            //        {
-            //            this.TrayManager.ShowYesNoDialog("Warning!", "This will stop the current sample. Unload anyway?");
-            //        }
-            //        else
-            //        {
-            //            // save off current view and try to restore it on the next reload
-            //            this.LastViewTitle = this.SampleMenu.SelectionIndex;
-            //            this.LastViewCategory = this.CategoryMenu.SelectionIndex;
+            else if (b.Name == "UnloadReload") // unload or reload sample plugins and update controls
+            {
+                if (b.Caption == "Unload Samples")
+                {
+                    if (CurrentSample != null)
+                    {
+                        this.TrayManager.ShowYesNoDialog("Warning!", "This will stop the current sample. Unload anyway?");
+                    }
+                    else
+                    {
+                        // save off current view and try to restore it on the next reload
+                        this.LastViewTitle = this.SampleMenu.SelectionIndex;
+                        this.LastViewCategory = this.CategoryMenu.SelectionIndex;
 
-            //            UnloadSamples();
-            //            PopulateSampleMenus();
-            //            b.Caption = "Reload Samples";
-            //        }
-            //    }
-            //    else
-            //    {
-            //        LoadSamples();
-            //        PopulateSampleMenus();
-            //        if (!(this.LoadedSamples.Count == 0))
-            //        {
-            //            b.Caption = "Unload Samples";
-            //        }
+                        UnloadSamples();
+                        PopulateSampleMenus();
+                        b.Caption = "Reload Samples";
+                    }
+                }
+                else
+                {
+                    LoadSamples();
+                    PopulateSampleMenus();
+                    if (!(this.LoadedSamples.Count == 0))
+                    {
+                        b.Caption = "Unload Samples";
+                    }
 
-            //        try // attempt to restore the last view before unloading samples
-            //        {
-            //            this.CategoryMenu.SelectItem(this.LastViewCategory);
-            //            this.SampleMenu.SelectItem(this.LastViewTitle);
-            //        }
-            //        catch (Exception)
-            //        {
-            //            // swallowing Exception on purpose
-            //        }
-            //    }
-            //}
+                    try // attempt to restore the last view before unloading samples
+                    {
+                        this.CategoryMenu.SelectItem(this.LastViewCategory);
+                        this.SampleMenu.SelectItem(this.LastViewTitle);
+                    }
+                    catch (Exception)
+                    {
+                        // swallowing Exception on purpose
+                    }
+                }
+            }
             else if (b.Name == "Configure") // enter configuration screen
             {
                 this.TrayManager.RemoveWidgetFromTray("StartStop");
@@ -788,7 +788,7 @@ namespace Axiom.Samples
             CreateDummyScene();
             LoadResources();
 
-            //Sample startupSample = LoadSamples();
+            Sample startupSample = LoadSamples();
 
             TextureManager.Instance.DefaultMipmapCount = 5;
 
@@ -805,10 +805,10 @@ namespace Axiom.Samples
             SetupWidgets();
             WindowResized(RenderWindow); // adjust menus for resolution
 
-            //if (startupSample != null)
-            //{
-            //    RunSample(startupSample);
-            //}
+            if (startupSample != null)
+            {
+                RunSample(startupSample);
+            }
         }
 
         /// <summary>
@@ -842,58 +842,58 @@ namespace Axiom.Samples
             Viewport vp = RenderWindow.AddViewport(cam);
         }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <returns></returns>
-        //protected virtual Sample LoadSamples()
-        //{
-        //    string dir = ".";
-        //    var samples = new SampleSet();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Sample LoadSamples()
+        {
+            string dir = ".";
+            var samples = new SampleSet();
 
-        //    PluginManager.Instance.LoadDirectory(dir);
+            PluginManager.Instance.LoadDirectory(dir);
 
-        //    foreach (IPlugin plugin in PluginManager.Instance.InstalledPlugins)
-        //    {
-        //        if (plugin is SamplePlugin pluginInstance)
-        //        {
-        //            this.LoadedSamplePlugins.Add(pluginInstance.Name);
-        //            foreach (SdkSample sample in pluginInstance.Samples)
-        //            {
-        //                this.LoadedSamples.Add(sample);
-        //            }
-        //        }
-        //    }
+            foreach (IPlugin plugin in PluginManager.Instance.InstalledPlugins)
+            {
+                if (plugin is SamplePlugin pluginInstance)
+                {
+                    this.LoadedSamplePlugins.Add(pluginInstance.Name);
+                    foreach (SdkSample sample in pluginInstance.Samples)
+                    {
+                        this.LoadedSamples.Add(sample);
+                    }
+                }
+            }
 
-        //    foreach (SdkSample sample in this.LoadedSamples)
-        //    {
-        //        if (!this.SampleCategories.Contains(sample.Metadata["Category"]))
-        //        {
-        //            this.SampleCategories.Add(sample.Metadata["Category"]);
-        //        }
-        //    }
+            foreach (SdkSample sample in this.LoadedSamples)
+            {
+                if (!this.SampleCategories.Contains(sample.Metadata["Category"]))
+                {
+                    this.SampleCategories.Add(sample.Metadata["Category"]);
+                }
+            }
 
-        //    if (this.LoadedSamples.Count > 0)
-        //    {
-        //        this.SampleCategories.Add("All");
-        //    }
-        //    return null;
-        //}
+            if (this.LoadedSamples.Count > 0)
+            {
+                this.SampleCategories.Add("All");
+            }
+            return null;
+        }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //protected virtual void UnloadSamples()
-        //{
-        //    for (int i = 0; i < this.LoadedSamplePlugins.Count; i++)
-        //    {
-        //        //mRoot.unloadPlugin(mLoadedSamplePlugins[i]);
-        //    }
+        /// <summary>
+        /// 
+        /// </summary>
+        protected virtual void UnloadSamples()
+        {
+            for (int i = 0; i < this.LoadedSamplePlugins.Count; i++)
+            {
+                //mRoot.unloadPlugin(mLoadedSamplePlugins[i]);
+            }
 
-        //    this.LoadedSamples.Clear();
-        //    this.LoadedSamplePlugins.Clear();
-        //    this.SampleCategories.Clear();
-        //}
+            this.LoadedSamples.Clear();
+            this.LoadedSamplePlugins.Clear();
+            this.SampleCategories.Clear();
+        }
 
         /// <summary>
         /// Sets up main page for browsing samples.
@@ -1043,7 +1043,7 @@ namespace Axiom.Samples
 
             base.Shutdown();
 
-            //UnloadSamples();
+            UnloadSamples();
         }
 
         /// <summary>

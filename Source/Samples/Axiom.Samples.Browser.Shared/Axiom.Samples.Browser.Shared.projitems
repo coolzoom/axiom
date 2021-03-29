@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)SampleBrowser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SampleBrowserZZ.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Content\Icons\AxiomIcon.ico">

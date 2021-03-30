@@ -29,3 +29,6 @@ Feature branches are work-in-progress branches that contain large chunks of new 
 ## hotfix/x
 
 Hotfixes are branched from *default* and exist to fix small bugs that are detected in a release after it has been tagged in *default*. These branches are usually small and concise, and are merged back into *default* and *develop* once they are completed. They should never be new features.
+
+### todo
+- why the mediazz woulnt copy to win32zz folder?

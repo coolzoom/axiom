@@ -9,6 +9,7 @@
     <Import_RootNamespace>Axiom.Samples.Browser.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)SampleBrowserZZ.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SampleBrowser.cs" />
   </ItemGroup>
   <ItemGroup>

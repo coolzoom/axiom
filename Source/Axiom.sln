@@ -99,10 +99,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Axiom.Tests.Unit", "Tests\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Axiom.Samples.ZZSample", "Samples\Axiom.Samples.ZZ\Axiom.Samples.ZZSample.csproj", "{7046D2B5-87DB-4DAF-B4B1-EE847C19098F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Axiom.Samples.Browser.Win32ZZ", "Samples\Axiom.Samples.Browser.Win32ZZ\Axiom.Samples.Browser.Win32ZZ.csproj", "{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5} = {EBB2396B-55C2-40E6-B3F8-33055314B8E5}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Axiom.Samples.MediaZZ", "Samples\mediazz\Axiom.Samples.MediaZZ.csproj", "{EBB2396B-55C2-40E6-B3F8-33055314B8E5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Samples\Axiom.Samples.Browser.Shared\Axiom.Samples.Browser.Shared.projitems*{030635e3-646d-4fe9-9857-8659c46ce1ba}*SharedItemsImports = 13
 		Samples\Axiom.Samples.Browser.Shared\Axiom.Samples.Browser.Shared.projitems*{0f73b59a-4204-4bd7-a9c0-d53c1a62f84f}*SharedItemsImports = 5
+		Samples\Axiom.Samples.Browser.Shared\Axiom.Samples.Browser.Shared.projitems*{4fe44208-a9bf-489b-a1ee-4a63a4f967d0}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1490,6 +1498,78 @@ Global
 		{7046D2B5-87DB-4DAF-B4B1-EE847C19098F}.Win8UIRelease|Mixed Platforms.Build.0 = Release|Any CPU
 		{7046D2B5-87DB-4DAF-B4B1-EE847C19098F}.Win8UIRelease|x86.ActiveCfg = Release|Any CPU
 		{7046D2B5-87DB-4DAF-B4B1-EE847C19098F}.Win8UIRelease|x86.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Debug|x86.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Release|x86.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Release|x86.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Debug|x86.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Debug|x86.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Release|Any CPU.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Release|x86.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8Release|x86.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIDebug|Any CPU.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIDebug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIDebug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIDebug|x86.ActiveCfg = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIDebug|x86.Build.0 = Debug|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIRelease|Any CPU.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIRelease|x86.ActiveCfg = Release|Any CPU
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0}.Win8UIRelease|x86.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Debug|x86.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Release|x86.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Release|x86.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Debug|x86.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Debug|x86.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Release|Any CPU.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Release|x86.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8Release|x86.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIDebug|Any CPU.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIDebug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIDebug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIDebug|x86.ActiveCfg = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIDebug|x86.Build.0 = Debug|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIRelease|Any CPU.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIRelease|x86.ActiveCfg = Release|Any CPU
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5}.Win8UIRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1538,6 +1618,8 @@ Global
 		{F83F595D-523C-4D9B-8142-7AF1BFB3CEBA} = {CB9F6D65-29D2-48FA-8F4E-72B977AC446F}
 		{A836B773-8B22-4713-A9D4-D4E32BA73296} = {B356F2B9-78E1-4E5E-A09A-683B82B2FAA0}
 		{7046D2B5-87DB-4DAF-B4B1-EE847C19098F} = {EBD96CBA-6CF8-4FC3-B200-3B31F49BC147}
+		{4FE44208-A9BF-489B-A1EE-4A63A4F967D0} = {EBD96CBA-6CF8-4FC3-B200-3B31F49BC147}
+		{EBB2396B-55C2-40E6-B3F8-33055314B8E5} = {EBD96CBA-6CF8-4FC3-B200-3B31F49BC147}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A01713A3-4275-484F-9660-9A2486A368A2}

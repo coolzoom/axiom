@@ -46,7 +46,7 @@ namespace Axiom.Samples
             try
             {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US", false);
-                using (var sb = new SampleBrowserZZ()) //using (var sb = new SampleBrowser())
+                using (var sb = new SampleBrowser()) //using (var sb = new SampleBrowser())
                 {
                     sb.Go();
                 }

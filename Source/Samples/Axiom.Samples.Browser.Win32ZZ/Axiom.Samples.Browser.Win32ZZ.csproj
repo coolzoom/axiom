@@ -1,0 +1,98 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <PropertyGroup>
+    <AssemblyTitle>Axiom.Samples.Browser.Win32</AssemblyTitle>
+    <TargetFrameworks>net472</TargetFrameworks>
+    <Copyright>Copyright (c) 2019 Axiom Rendering Engine Project Team.</Copyright>
+    <Product>Axiom Rendering Engine Samples</Product>
+    <Company>Axiom Rendering Engine Project Team (http://axiom3d.net)</Company>
+    <AssemblyVersion>0.9.0.0</AssemblyVersion>
+    <FileVersion>0.9.0.0</FileVersion>
+    <Version>0.9.0</Version>
+    <Authors>Axiom Rendering Engine Project Team (http://axiom3d.net)</Authors>
+    <PackageProjectUrl>http://axiom3d.net</PackageProjectUrl>
+    <RepositoryUrl>http://github/axiom3d/axiom</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>http://axiom3d.net/wiki/index.php/license.txt</PackageLicenseUrl>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
+    <OutputPath>..\bin\win32zz\Debug</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
+    <OutputPath>..\bin\win32zz\Release</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Composition" Version="1.3.0-preview3.19128.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Axiom.Platforms.Windows\Axiom.Platforms.Windows.csproj">
+      <Project>{77ac0d3a-2a99-4ea6-a90e-c71bb53751c5}</Project>
+      <Name>Axiom.Platforms.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Axiom.RenderSystems.OpenGL\Axiom.RenderSystems.OpenGL.csproj" />
+    <ProjectReference Include="..\..\Core\Axiom\Axiom.csproj">
+      <Project>{77e8323a-5cdb-4b39-b9e0-7d12a2aad3a3}</Project>
+      <Name>Axiom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Axiom.Framework.WinForms\Axiom.Framework.WinForms.csproj" />
+    <ProjectReference Include="..\..\Framework\Axiom.Framework\Axiom.Framework.csproj">
+      <Project>{AF0AAC88-68C8-4CF4-AFFA-526AD899758A}</Project>
+      <Name>Axiom.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Axiom.Plugins.FreeImageCodecs\Axiom.Plugins.FreeImageCodecs.csproj">
+      <Project>{3FA3E842-91DE-4A78-99A8-DE3546763136}</Project>
+      <Name>Axiom.Plugins.FreeImageCodecs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Axiom.Plugins.CgProgramManager\Axiom.Plugins.CgProgramManager.csproj">
+      <Project>{E2B64AA9-77C8-4BED-AB5B-10B2832E0D5B}</Project>
+      <Name>Axiom.Plugins.CgProgramManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Axiom.Plugins.ParticleFX\Axiom.Plugins.ParticleFX.csproj">
+      <Project>{F81F1AAF-8BC9-4064-94C2-AD0C0A9C0ED1}</Project>
+      <Name>Axiom.Plugins.ParticleFX</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Axiom.RenderSystems.DirectX9\Axiom.RenderSystems.DirectX9.csproj">
+      <Project>{68DBB62F-F98D-47B5-A769-C20B461227AB}</Project>
+      <Name>Axiom.RenderSystems.DirectX9</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Axiom.SceneManagers.Bsp\Axiom.SceneManagers.Bsp.csproj">
+      <Project>{161EA53F-8D78-4BD3-8217-442D94A593C1}</Project>
+      <Name>Axiom.SceneManagers.Bsp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Axiom.Samples.Bsp\Axiom.Samples.Bsp.csproj">
+      <Project>{4b199736-110c-4cf4-9a81-8af9f8c9e66b}</Project>
+      <Name>Axiom.Samples.Bsp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Axiom.Samples.Common\Axiom.Samples.Common.csproj">
+      <Project>{A9B352AA-24CF-42F6-9D2E-812382055F5E}</Project>
+      <Name>Axiom.Samples.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Axiom.Samples.ZZ\Axiom.Samples.ZZSample.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\AxiomIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SharpInputSystem.DirectX">
+      <Version>0.5.10</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <Import Project="..\Axiom.Samples.Browser.Shared\Axiom.Samples.Browser.Shared.projitems" Label="Shared" />
+</Project>

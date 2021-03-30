@@ -129,6 +129,7 @@
       <Project>{0edb7324-39cb-4bed-866c-1340037cfd5a}</Project>
       <Name>Axiom.Samples.VolumeTexture</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Axiom.Samples.ZZ\Axiom.Samples.ZZSample.csproj" />
     <ProjectReference Include="..\media\Axiom.Samples.Media.csproj">
       <Project>{82d00a5b-1943-4ddf-859a-7552f75cbf1f}</Project>
       <Name>Axiom.Samples.Media</Name>

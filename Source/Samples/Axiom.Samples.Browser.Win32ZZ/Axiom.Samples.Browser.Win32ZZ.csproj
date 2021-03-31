@@ -27,11 +27,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
-    <OutputPath>..\bin\win32zz\Debug</OutputPath>
+    <OutputPath>..\bin\win32\Debug</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
-    <OutputPath>..\bin\win32zz\Release</OutputPath>
+    <OutputPath>..\bin\win32\Release</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -28,6 +28,8 @@ using Axiom.Math;
 using Axiom.Graphics;
 using System.IO;
 using System.Collections.Generic;
+using Axiom.Components.RTShaderSystem;
+using Axiom.Core.Collections;
 
 namespace Axiom.Samples.MousePicking
 {
@@ -36,6 +38,23 @@ namespace Axiom.Samples.MousePicking
     /// </summary>
     public class MousePickingSample : SdkSample
     {
+        private enum ShaderSystemLightingModel
+        {
+            PerVertexLighting,
+            PerPixelLighting,
+            NormalMapLightingTangentSpace,
+            NormalMapLightingObjectSpace
+        }
+        private ShaderSystemLightingModel curLightingModel;
+        private SubRenderState reflectionMapSubRS;
+        private bool reflectionMapEnable;
+        private Slider modifierValueSlider;
+        private Slider reflectionPowerSlider;
+        private const string ReflectionMapPowerSlider = "ReflectionPowerSlider";
+        private const string ModifierValueSlider = "ModifierValueSlider";
+        private const string MainEntityMesh = "MainEntity";
+
+
         /// <summary>
         /// safety check for mouse picking sample calls
         /// </summary>
@@ -66,11 +85,14 @@ namespace Axiom.Samples.MousePicking
         private string modelName = "sphere.mesh";
         private Mesh modelMesh ;
         private Vector3 modelSize;
+        private EntityList targetEntities;
+        private Entity layeredBlendingEntity;
         /// <summary>
         /// Sample initialization
         /// </summary>
         public MousePickingSample()
         {
+            this.layeredBlendingEntity = null;
             Metadata["Title"] = "Mouse Picking";
             Metadata["Description"] = "Demonstrates selecting a node with a mouse.";
             Metadata["Thumbnail"] = "thumb_picking.png";
@@ -178,6 +200,11 @@ namespace Axiom.Samples.MousePicking
             // create a skydome
             //SceneManager.SetSkyDome(true, "Examples/CloudySky", 5, 8);
 
+            curLightingModel = ShaderSystemLightingModel.PerVertexLighting;
+            targetEntities = new EntityList();
+            targetEntities.Clear();
+            reflectionMapSubRS = null;
+            reflectionMapEnable = false;
 
             SceneManager.SetSkyBox(true, "Examples/NebulaSkyBox", 500);
 
@@ -198,11 +225,17 @@ namespace Axiom.Samples.MousePicking
             light.Position = new Vector3(2000, 1000, 1000);
             light.Diffuse = new ColorEx(1.0f, 0.5f, 0.0f);
 
-
-            // create a plane for the plane mesh
-            var plane = new Plane();
-            plane.Normal = Vector3.UnitY;
-            plane.D = 200;
+            ////Create texture layer blending demonstration entity
+            //this.layeredBlendingEntity = SceneManager.CreateEntity("LayeredBlendingMaterialEntity", MainEntityMesh);
+            //this.layeredBlendingEntity.MaterialName = "RTSS/LayeredBlending";
+            //this.layeredBlendingEntity.GetSubEntity(0).SetCustomParameter(2, Vector4.Zero);
+            //childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
+            //childNode.Position = new Vector3(300, 200, -200);
+            //childNode.AttachObject(this.layeredBlendingEntity);
+            //// create a plane for the plane mesh
+            //var plane = new Plane();
+            //plane.Normal = Vector3.UnitY;
+            //plane.D = 200;
 
             //// create a plane mesh
             //MeshManager.Instance.CreatePlane("FloorPlane", ResourceGroupManager.DefaultResourceGroupName, plane, 200000, 200000,
@@ -267,6 +300,8 @@ namespace Axiom.Samples.MousePicking
             SetupScatterPoint();
             this.initialized = true;
             base.SetupContent();
+
+            UpdateSystemShaders();
         }
         private void SetupScatterPoint()
         {
@@ -287,7 +322,7 @@ namespace Axiom.Samples.MousePicking
 
                     Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), modelName);
                     headsub.MaterialName = "Examples/GreenSkin";
-
+                    targetEntities.Add(headsub);
                     Vector3 v = new Vector3(y, z, x);
 
                     // setup some basic lighting for our scene
@@ -306,7 +341,7 @@ namespace Axiom.Samples.MousePicking
                     headNodesub.Position = dictOriginalPosition["Head" + i.ToString()];
 
                     dictnode.Add("Head" + i.ToString(), headNodesub);
-
+                    
                 }
             }
 
@@ -351,7 +386,180 @@ namespace Axiom.Samples.MousePicking
 
             TrayManager.ShowCursor();
         }
+        private void UpdateSystemShaders()
+        {
+            foreach (var it in this.targetEntities)
+            {
+                GenerateShaders(it);
+            }
+        }
+        private ShaderSystemLightingModel CurrentLightingModel
+        {
+            get
+            {
+                return this.curLightingModel;
+            }
+            set
+            {
+                if (this.curLightingModel != value)
+                {
+                    this.curLightingModel = value;
 
+                    foreach (var it in this.targetEntities)
+                    {
+                        GenerateShaders(it);
+                    }
+                }
+            }
+        }
+
+        private void GenerateShaders(Entity entity)
+        {
+            for (int i = 0; i < entity.SubEntityCount; i++)
+            {
+                SubEntity curSubEntity = entity.GetSubEntity(i);
+                string curMaterialName = curSubEntity.MaterialName;
+                bool success;
+
+                //Create the shader based technique of this material.
+                success = ShaderGenerator.Instance.CreateShaderBasedTechnique(curMaterialName, MaterialManager.DefaultSchemeName,
+                                                                               ShaderGenerator.DefaultSchemeName, false);
+
+                //Setup custmo shader sub render states according to current setup.
+                if (success)
+                {
+                    var curMaterial = (Material)MaterialManager.Instance.GetByName(curMaterialName);
+                    Pass curPass = curMaterial.GetTechnique(0).GetPass(0);
+
+                    if (true)
+                    {
+                        curPass.Specular = ColorEx.White;
+                        curPass.Shininess = 32;
+                    }
+                    else
+                    {
+                        curPass.Specular = ColorEx.Beige;
+                        curPass.Shininess = 0;
+                    }
+                    // Grab the first pass render state. 
+                    // NOTE: For more complicated samples iterate over the passes and build each one of them as desired.
+                    RenderState renderState = ShaderGenerator.Instance.GetRenderState(ShaderGenerator.DefaultSchemeName,
+                                                                                       curMaterialName, 0);
+
+                    //Remove all sub render states
+                    renderState.Reset();
+
+                    if (this.curLightingModel == ShaderSystemLightingModel.PerVertexLighting)
+                    {
+                        SubRenderState perPerVertexLightModel = ShaderGenerator.Instance.CreateSubRenderState(FFPLighting.FFPType);
+                        renderState.AddTemplateSubRenderState(perPerVertexLightModel);
+                    }
+                    else if (this.curLightingModel == ShaderSystemLightingModel.PerVertexLighting)
+                    {
+                        SubRenderState perPixelLightModel = ShaderGenerator.Instance.CreateSubRenderState(PerPixelLighting.SGXType);
+                        renderState.AddTemplateSubRenderState(perPixelLightModel);
+                    }
+                    else if (this.curLightingModel == ShaderSystemLightingModel.NormalMapLightingTangentSpace)
+                    {
+                        ////Apply normal map only on main entity.
+                        //if (entity.Name == MainEntityName)
+                        //{
+                        //    SubRenderState subRenderState = ShaderGenerator.Instance.CreateSubRenderState(NormalMapLighting.SGXType);
+                        //    var normalMapSubRS = subRenderState as NormalMapLighting;
+
+                        //    normalMapSubRS.NormalMapSpace = NormalMapSpace.Tangent;
+                        //    normalMapSubRS.NormalMapTextureName = "Panels_Normal_Tangent.png";
+                        //    renderState.AddTemplateSubRenderState(normalMapSubRS);
+                        //}
+                        ////It is secondary entity -> use simple per pixel lighting
+                        //else
+                        {
+                            SubRenderState perPixelLightModel = ShaderGenerator.Instance.CreateSubRenderState(PerPixelLighting.SGXType);
+                            renderState.AddTemplateSubRenderState(perPixelLightModel);
+                        }
+                    }
+                    else if (this.curLightingModel == ShaderSystemLightingModel.NormalMapLightingObjectSpace)
+                    {
+                        ////Apply normal map only on main entity
+                        //if (entity.Name == MainEntityName)
+                        //{
+                        //    SubRenderState subRenderState = ShaderGenerator.Instance.CreateSubRenderState(NormalMapLighting.SGXType);
+                        //    var normalMapSubRS = subRenderState as NormalMapLighting;
+
+                        //    normalMapSubRS.NormalMapSpace = NormalMapSpace.Object;
+                        //    normalMapSubRS.NormalMapTextureName = "Panels_Normal_Obj.png";
+
+                        //    renderState.AddTemplateSubRenderState(normalMapSubRS);
+                        //}
+
+                        ////It is secondary entity -> use simple per pixel lighting.
+                        //else
+                        {
+                            SubRenderState perPixelLightModel = ShaderGenerator.Instance.CreateSubRenderState(PerPixelLighting.SGXType);
+                            renderState.AddTemplateSubRenderState(perPixelLightModel);
+                        }
+                    }
+
+                    if (this.reflectionMapEnable)
+                    {
+                        SubRenderState subRenderState = ShaderGenerator.Instance.CreateSubRenderState(ReflectionMap.SGXType);
+                        var reflectMapSubRs = subRenderState as ReflectionMap;
+
+                        reflectMapSubRs.ReflectionMapType = TextureType.CubeMap;
+                        reflectMapSubRs.ReflectionPower = this.reflectionPowerSlider.Value;
+
+                        //Setup the textures needed by the reflection effect
+                        reflectMapSubRs.MaskMapTextureName = "Panels_refmask.png";
+                        reflectMapSubRs.ReflectionMapTextureName = "cubescene.jpg";
+
+                        renderState.AddTemplateSubRenderState(subRenderState);
+                        this.reflectionMapSubRS = subRenderState;
+                    }
+                    else
+                    {
+                        this.reflectionMapSubRS = null;
+                    }
+                    //Invalidate this material in order to regen its shaders
+                    ShaderGenerator.Instance.InvalidateMaterial(ShaderGenerator.DefaultSchemeName, curMaterialName);
+                }
+            }
+        }
+        public void SliderMoved(object sender, Slider slider)
+        {
+            if (slider.Name == ReflectionMapPowerSlider)
+            {
+                Real reflectionPower = slider.Value;
+
+                if (this.reflectionMapSubRS != null)
+                {
+                    var reflectMapSubRS = this.reflectionMapSubRS as ReflectionMap;
+
+                    // Since RTSS export caps based on the template sub render states we have to update the template reflection sub render state.
+                    reflectMapSubRS.ReflectionPower = reflectionPower;
+
+                    // Grab the instances set and update them with the new reflection power value.
+                    // The instances are the actual sub render states that have been assembled to create the final shaders.
+                    // Every time that the shaders have to be re-generated (light changes, fog changes etc..) a new set of sub render states 
+                    // based on the template sub render states assembled for each pass.
+                    // From that set of instances a CPU program is generated and afterward a GPU program finally generated.
+
+                    foreach (var it in this.reflectionMapSubRS.TemplateSubRenderStateList)
+                    {
+                        var reflectionMapInstance = it as ReflectionMap;
+                        reflectionMapInstance.ReflectionPower = reflectionPower;
+                    }
+                }
+            }
+
+            //if (slider.Name == ModifierValueSlider)
+            //{
+            //    if (this.layeredBlendingEntity != null)
+            //    {
+            //        Real val = this.modifierValueSlider.Value;
+            //        this.layeredBlendingEntity.GetSubEntity(0).SetCustomParameter(2, new Vector4(val, val, val, 0));
+            //    }
+            //}
+        }
         /// <summary>
         /// Event for when the menu changes, sets the MouseSelectors SelectionMode
         /// </summary>
@@ -387,6 +595,17 @@ namespace Axiom.Samples.MousePicking
             SampleSliderZ.SliderMoved += new SliderMovedHandler(_slidermoved);
 
             targetObjName = TrayManager.CreateLabel(TrayLocation.TopLeft, "TargetObjName", string.Empty, 220);
+
+            this.modifierValueSlider = TrayManager.CreateThickSlider(TrayLocation.Right, ModifierValueSlider, "Modifier", 240,
+                                                                    80, 0,
+                                                                    1, 100);
+            this.modifierValueSlider.SetValue(0.0f, false);
+            this.modifierValueSlider.SliderMoved += new SliderMovedHandler(SliderMoved);
+
+            this.reflectionPowerSlider = TrayManager.CreateThickSlider(TrayLocation.Bottom, ReflectionMapPowerSlider,
+                                                            "Reflection Power", 240, 80, 0, 1, 100);
+            this.reflectionPowerSlider.SetValue(0.5f, false);
+            this.reflectionPowerSlider.SliderMoved += new SliderMovedHandler(SliderMoved);
         }
         private void _slidermoved(object sender, Slider slider)
         {

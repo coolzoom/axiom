@@ -61,6 +61,10 @@ namespace Axiom.Samples.MousePicking
         private Slider SampleSliderX;
         private Slider SampleSliderY;
         private Slider SampleSliderZ;
+        private Slider SampleSliderScale;
+        private string modelName = "sphere.mesh";
+        private Mesh modelMesh ;
+        private Vector3 modelSize;
         /// <summary>
         /// Sample initialization
         /// </summary>
@@ -210,36 +214,10 @@ namespace Axiom.Samples.MousePicking
                                                                              Quaternion.Identity);
             ogreHead3Node.AttachObject(ogreHead3);
 
-
-            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv");
-
-            dictnode = new Dictionary<string, SceneNode> { };
-            dictOriginalPosition = new Dictionary<string, Vector3>();
-            for (int i = 1; i < content.Length; i++)
-            {
-                string[] l = content[i].Split(',');
-                if (l.Length == 3)
-                {
-
-                    float x = float.Parse(l[0]) * 100;
-                    float y = float.Parse(l[1]) * 100;
-                    float z = float.Parse(l[2]) * 10000;
-
-                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "sphere.mesh");
-                    headsub.MaterialName = "Examples/GreenSkin";
-         
-                    Vector3 v = new Vector3(y, z, x);
-                    dictOriginalPosition.Add("Head" + i.ToString(), v);
-                    SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
-                    headNodesub.AttachObject(headsub);
-                    //headNodesub.Translate = new Vector3(200, 0, 0);
-
-                    headNodesub.Position = dictOriginalPosition["Head" + i.ToString()];
-
-                    dictnode.Add("Head" + i.ToString(), headNodesub);
-
-                }
-            }
+            //temp entity to get meshsize 
+            Entity headsub = SceneManager.CreateEntity("Head", modelName);
+            modelMesh = headsub.Mesh;
+            modelSize = modelMesh.BoundingBox.Size;
 
             // make sure the camera tracks this node
             // set initial camera position
@@ -266,9 +244,69 @@ namespace Axiom.Samples.MousePicking
 
             SetupGUI();
             SetupSlider();
+            SetupScatterPoint();
             this.initialized = true;
             base.SetupContent();
         }
+        private void SetupScatterPoint()
+        {
+            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv");
+
+            dictnode = new Dictionary<string, SceneNode> { };
+            dictOriginalPosition = new Dictionary<string, Vector3>();
+            for (int i = 1; i < content.Length; i++)
+            {
+                string[] l = content[i].Split(',');
+                if (l.Length == 3)
+                {
+
+                    float x = float.Parse(l[0]) * 100;
+                    float y = float.Parse(l[1]) * 100;
+                    float z = float.Parse(l[2]) * 10000;
+
+
+                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), modelName);
+                    headsub.MaterialName = "Examples/GreenSkin";
+
+                    Vector3 v = new Vector3(y, z, x);
+                    dictOriginalPosition.Add("Head" + i.ToString(), v);
+                    SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
+                    headNodesub.AttachObject(headsub);
+                    //headNodesub.Translate = new Vector3(200, 0, 0);
+                    headNodesub.Scale = new Vector3(SampleSliderScale.Value, SampleSliderScale.Value, SampleSliderScale.Value);
+                    //headNodesub.ScaleBy(new Vector3(1 / modelSize.x * SampleSliderScale.Value,
+                    //                                1 / modelSize.y * SampleSliderScale.Value,
+                    //                                1 / modelSize.z * SampleSliderScale.Value));
+
+                    headNodesub.Position = dictOriginalPosition["Head" + i.ToString()];
+
+                    dictnode.Add("Head" + i.ToString(), headNodesub);
+
+                }
+            }
+
+        }
+        //private void AddModelToScene(string modelName)
+        //{
+        //    this.numberOfModelsAdded++;
+        //    for (int i = 0; i < 8; i++)
+        //    {
+        //        float scaleFactor = 30;
+        //        Entity entity;
+        //        SceneNode childNode;
+        //        entity = SceneManager.CreateEntity("createdEnts" + this.numberOfModelsAdded.ToString(), modelName);
+        //        this.lotsOfModelsEntitites.Add(entity);
+        //        childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
+        //        this.lotsOfModelsNodes.Add(childNode);
+        //        childNode.Position = new Vector3(this.numberOfModelsAdded * scaleFactor, 15, i * scaleFactor);
+        //        childNode.AttachObject(entity);
+        //        var modelMesh = (Mesh)MeshManager.Instance.GetByName(modelName);
+        //        Vector3 modelSize = modelMesh.BoundingBox.Size;
+        //        childNode.ScaleBy(new Vector3(1 / modelSize.x * scaleFactor,
+        //                                        1 / modelSize.y * scaleFactor,
+        //                                        1 / modelSize.z * scaleFactor));
+        //    }
+        //}
 
         /// <summary>
         /// Creates and initializes all the scene's GUI elements not defined in SdkSample
@@ -305,6 +343,11 @@ namespace Axiom.Samples.MousePicking
         [OgreVersion(1, 7, 2)]
         protected void SetupSlider()
         {
+            SampleSliderScale = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "modelscale", "modelscale", 250, 80,
+                                                0.1, 10, 100);
+            SampleSliderScale.SetValue(0.3, false);
+            SampleSliderScale.SliderMoved += new SliderMovedHandler(_slidermoved);
+
             SampleSliderX = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomX", "zoomX", 250, 80,
                                                             1, 100, 100);
             SampleSliderX.SetValue(1, false);
@@ -327,6 +370,10 @@ namespace Axiom.Samples.MousePicking
                 Vector3 np = new Vector3(dictOriginalPosition[n.Key].x * SampleSliderX.Value, dictOriginalPosition[n.Key].y * SampleSliderY.Value, dictOriginalPosition[n.Key].z * SampleSliderZ.Value);
 
                 n.Value.Position = np;
+                n.Value.Scale = new Vector3(SampleSliderScale.Value, SampleSliderScale.Value, SampleSliderScale.Value);
+                //n.Value.ScaleBy(new Vector3(1 / modelSize.x * SampleSliderScale.Value,
+                //                                1 / modelSize.y * SampleSliderScale.Value,
+                //                                1 / modelSize.z * SampleSliderScale.Value));
             }
 
         }

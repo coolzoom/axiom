@@ -661,7 +661,10 @@
     <None Update="media\Textures\growth_weirdfungus-03_normalheight.dds">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="media\Textures\Panels_Diffuse.png">
+    <None Update="media\Textures\Panel_diffuse.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="media\Textures\Panel_diffuse.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="media\Textures\terrain.png">

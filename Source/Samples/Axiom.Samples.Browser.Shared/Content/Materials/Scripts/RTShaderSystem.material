@@ -16,7 +16,7 @@ material RTSS/PerPixel_SinglePass
 			
 			texture_unit
 			{
-				texture Panels_Diffuse.png
+				texture Panel_diffuse.jpg
 			}				
 			
 			// RT Shader system section.
@@ -45,7 +45,7 @@ material RTSS/NormalMapping_SinglePass
 			
 			texture_unit
 			{
-				texture Panels_Diffuse.png
+				texture Panel_diffuse.jpg
 			}				
 			
 			// RT Shader system section.
@@ -123,7 +123,7 @@ material RTSS/NormalMapping_MultiPass
 			scene_blend dest_colour zero
 			texture_unit decalmap
 			{
-				texture Panels_Diffuse.png
+				texture Panel_diffuse.jpg
 			}			
 		}			
 	}

@@ -2,7 +2,7 @@
 
 /*
 Axiom Graphics Engine Library
-Copyright © 2003-2011 Axiom Project Team
+Copyright ?2003-2011 Axiom Project Team
 
 The overall design, and a majority of the core engine and rendering code
 contained within this library is a derivative of the open source Object Oriented
@@ -722,7 +722,7 @@ namespace Axiom.Core
             }
             else
             {
-                throw new AxiomException(String.Format("Resource '{0}' with the handle {1} already exists.", res.Name, res.Handle));
+                //throw new AxiomException(String.Format("Resource '{0}' with the handle {1} already exists.", res.Name, res.Handle));
             }
         }
 

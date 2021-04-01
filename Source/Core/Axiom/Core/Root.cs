@@ -1459,7 +1459,15 @@ namespace Axiom.Core
             // Tell buffer manager to free temp buffers used this frame
             if (HardwareBufferManager.Instance != null)
             {
-                HardwareBufferManager.Instance.ReleaseBufferCopies(false);
+                try
+                { 
+                    HardwareBufferManager.Instance.ReleaseBufferCopies(false); 
+                }
+                catch (Exception ex)
+                {
+                    //throw new AxiomException("Unable ReleaseBufferCopies", ex);
+                }
+
             }
 
             // Tell the queue to process responses

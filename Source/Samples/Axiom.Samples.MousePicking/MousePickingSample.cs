@@ -52,8 +52,8 @@ namespace Axiom.Samples.MousePicking
         private Slider reflectionPowerSlider;
         private const string ReflectionMapPowerSlider = "ReflectionPowerSlider";
         private const string ModifierValueSlider = "ModifierValueSlider";
-        private const string MainEntityMesh = "MainEntity";
-
+        private const string MainEntityMesh = "sphere.mesh";
+        private const string MainEntityName = "MainEntity";
 
         /// <summary>
         /// safety check for mouse picking sample calls
@@ -266,7 +266,53 @@ namespace Axiom.Samples.MousePicking
             ogreHead3Node = SceneManager.RootSceneNode.CreateChildSceneNode("OgreHead3Node", new Vector3(+100, 0, 0),
                                                                              Quaternion.Identity);
             ogreHead3Node.AttachObject(ogreHead3);
-            
+
+
+            Entity entity;
+            SceneNode childNode;
+
+            //Create the main entity and mark it as the current target object
+            entity = SceneManager.CreateEntity(MainEntityName, MainEntityMesh);
+            this.targetEntities.Add(entity);
+            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
+            childNode.AttachObject(entity);
+            //this.targetObj = entity;
+            childNode.ShowBoundingBox = true;
+
+            //Create reflection entity that will show the exported material.
+            string mainExportedMaterial = SceneManager.GetEntity(MainEntityName).GetSubEntity(0).MaterialName;// + "_RTSS_Export";
+
+            var matMainEnt = (Material)MaterialManager.Instance.GetByName(mainExportedMaterial);
+
+            entity = SceneManager.CreateEntity("ExportedMaterialEntity", MainEntityMesh);
+            entity.GetSubEntity(0).Material = matMainEnt;
+            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
+            childNode.Position = new Vector3(0, 200, -200);
+            childNode.AttachObject(entity);
+
+            //Create texture layer blending demonstration entity
+            this.layeredBlendingEntity = SceneManager.CreateEntity("LayeredBlendingMaterialEntity", MainEntityMesh);
+            this.layeredBlendingEntity.MaterialName = "RTSS/LayeredBlending";
+            this.layeredBlendingEntity.GetSubEntity(0).SetCustomParameter(2, Vector4.Zero);
+            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
+            childNode.Position = new Vector3(300, 200, -200);
+            childNode.AttachObject(this.layeredBlendingEntity);
+
+            //Create per pixel lighting demo entity
+            entity = SceneManager.CreateEntity("PerPixelEntity", "ogrehead.mesh");
+            entity.MaterialName = "RTSS/PerPixel_SinglePass";
+            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
+            childNode.Position = new Vector3(300, 100, -100);
+            childNode.AttachObject(entity);
+
+            //Create normal map lighting demo entity
+            entity = SceneManager.CreateEntity("NormalMapEntity", "ogrehead.mesh");
+            entity.MaterialName = "RTSS/NormalMapping_SinglePass";
+            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
+            childNode.Position = new Vector3(-300, 100, -100);
+            childNode.AttachObject(entity);
+
+
             //temp entity to get meshsize 
             Entity headsub = SceneManager.CreateEntity("Head", modelName);
             modelMesh = headsub.Mesh;
@@ -303,6 +349,8 @@ namespace Axiom.Samples.MousePicking
 
             UpdateSystemShaders();
         }
+
+
         private void SetupScatterPoint()
         {
             string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv");

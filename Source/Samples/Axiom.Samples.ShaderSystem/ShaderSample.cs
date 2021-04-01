@@ -182,7 +182,7 @@ namespace Axiom.Samples.ShaderSystem
             }
             else if (cbName == AddLotsOfModelsName)
             {
-                //UpdateAddLotsOfModels(box.IsChecked);
+                UpdateAddLotsOfModels(box.IsChecked);
             }
             else if (cbName == SpotLightName)
             {
@@ -308,6 +308,8 @@ namespace Axiom.Samples.ShaderSystem
 
         public void UpdateAddLotsOfModels(bool addThem)
         {
+            lotsOfModelsEntitites = new List<Entity>();
+            lotsOfModelsNodes = new List<SceneNode>();
             if (this.addedLotsOfModels != addThem)
             {
                 this.addedLotsOfModels = addThem;
@@ -581,7 +583,7 @@ namespace Axiom.Samples.ShaderSystem
 
         private void AddModelToScene(string modelName)
         {
-            this.numberOfModelsAdded++;
+            
             for (int i = 0; i < 8; i++)
             {
                 float scaleFactor = 30;
@@ -598,6 +600,7 @@ namespace Axiom.Samples.ShaderSystem
                 childNode.ScaleBy(new Vector3(1 / modelSize.x * scaleFactor,
                                                 1 / modelSize.y * scaleFactor,
                                                 1 / modelSize.z * scaleFactor));
+                this.numberOfModelsAdded++;
             }
         }
 

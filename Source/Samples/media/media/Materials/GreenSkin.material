@@ -1,0 +1,13 @@
+material Examples/GreenSkin
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture GreenSkin.jpg
+			}
+		}
+	}
+}

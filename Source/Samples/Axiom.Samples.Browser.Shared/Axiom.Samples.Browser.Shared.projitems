@@ -16,6 +16,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Icons\AxiomIcon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\GreenSkin.material" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Materials\Textures\aureola.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Materials\Textures\axiomlogo.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Materials\Textures\basic_droplet.png" />
@@ -206,6 +207,7 @@
     <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\BumpyMetal.material" />
     <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\CloudySkyBox.material" />
     <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\Droplet.material" />
+    <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\NebulaSkyBox.material" />
     <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\EveningSkyBox.material" />
     <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\Examples-DynTex.material" />
     <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\Examples.program" />

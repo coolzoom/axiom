@@ -116,7 +116,7 @@ namespace Axiom.Samples.ZZSample
                     float y = float.Parse(l[1]) * 100;
                     float z = float.Parse(l[2]) * 10000;
 
-                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "ogrehead.mesh");
+                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "sphere.mesh");
                     Vector3 v = new Vector3(y, z, x);
                     dictOriginalPosition.Add("Head" + i.ToString(), v);
                     SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();

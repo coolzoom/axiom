@@ -16,6 +16,10 @@
     <PackageLicenseUrl>http://axiom3d.net/wiki/index.php/license.txt</PackageLicenseUrl>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="media\Materials\GreenSkin.material" />
+    <None Remove="media\Materials\NebulaSkyBox.material" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="media\Archives\AxiomCore.zip">
@@ -81,6 +85,9 @@
     <Content Include="media\Materials\MorningSkyBox.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="media\Materials\NebulaSkyBox.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="media\Materials\Ocean.controls">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -91,6 +98,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="media\Materials\Penguin.material">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="media\Materials\GreenSkin.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="media\Materials\Rockwall.material">

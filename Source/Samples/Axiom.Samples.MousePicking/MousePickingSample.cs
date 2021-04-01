@@ -26,6 +26,8 @@ using Axiom.Animating;
 using Axiom.Core;
 using Axiom.Math;
 using Axiom.Graphics;
+using System.IO;
+using System.Collections.Generic;
 
 namespace Axiom.Samples.MousePicking
 {
@@ -54,6 +56,11 @@ namespace Axiom.Samples.MousePicking
         /// </summary>
         protected Label MouseLocationLabel;
 
+        private Dictionary<string, SceneNode> dictnode;
+        private Dictionary<string, Vector3> dictOriginalPosition;
+        private Slider SampleSliderX;
+        private Slider SampleSliderY;
+        private Slider SampleSliderZ;
         /// <summary>
         /// Sample initialization
         /// </summary>
@@ -155,7 +162,14 @@ namespace Axiom.Samples.MousePicking
             SceneManager.AmbientLight = new ColorEx(1.0f, 0.2f, 0.2f, 0.2f);
 
             // create a skydome
-            SceneManager.SetSkyDome(true, "Examples/CloudySky", 5, 8);
+            //SceneManager.SetSkyDome(true, "Examples/CloudySky", 5, 8);
+
+
+            SceneManager.SetSkyBox(true, "Examples/NebulaSkyBox", 5000);
+
+            // setup some basic lighting for our scene
+            //SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
+            SceneManager.CreateLight("ParticleSampleLight").Position = new Vector3(0, 0, 0);
 
             // create a simple default point light
             Light light = SceneManager.CreateLight("MainLight");
@@ -166,14 +180,14 @@ namespace Axiom.Samples.MousePicking
             plane.Normal = Vector3.UnitY;
             plane.D = 200;
 
-            // create a plane mesh
-            MeshManager.Instance.CreatePlane("FloorPlane", ResourceGroupManager.DefaultResourceGroupName, plane, 200000, 200000,
-                                              20, 20, true, 1, 50, 50, Vector3.UnitZ);
+            //// create a plane mesh
+            //MeshManager.Instance.CreatePlane("FloorPlane", ResourceGroupManager.DefaultResourceGroupName, plane, 200000, 200000,
+            //                                  20, 20, true, 1, 50, 50, Vector3.UnitZ);
 
-            // create an entity to reference this mesh
-            Entity planeEntity = SceneManager.CreateEntity("Floor", "FloorPlane");
-            planeEntity.MaterialName = "Examples/RustySteel";
-            SceneManager.RootSceneNode.CreateChildSceneNode().AttachObject(planeEntity);
+            //// create an entity to reference this mesh
+            //Entity planeEntity = SceneManager.CreateEntity("Floor", "FloorPlane");
+            //planeEntity.MaterialName = "Examples/RustySteel";
+            //SceneManager.RootSceneNode.CreateChildSceneNode().AttachObject(planeEntity);
 
             // create an entity to have follow the path
             Entity ogreHead = SceneManager.CreateEntity("OgreHead", "ogrehead.mesh");
@@ -196,11 +210,49 @@ namespace Axiom.Samples.MousePicking
                                                                              Quaternion.Identity);
             ogreHead3Node.AttachObject(ogreHead3);
 
+
+            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv");
+
+            dictnode = new Dictionary<string, SceneNode> { };
+            dictOriginalPosition = new Dictionary<string, Vector3>();
+            for (int i = 1; i < content.Length; i++)
+            {
+                string[] l = content[i].Split(',');
+                if (l.Length == 3)
+                {
+
+                    float x = float.Parse(l[0]) * 100;
+                    float y = float.Parse(l[1]) * 100;
+                    float z = float.Parse(l[2]) * 10000;
+
+                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), "sphere.mesh");
+                    headsub.MaterialName = "Examples/GreenSkin";
+         
+                    Vector3 v = new Vector3(y, z, x);
+                    dictOriginalPosition.Add("Head" + i.ToString(), v);
+                    SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
+                    headNodesub.AttachObject(headsub);
+                    //headNodesub.Translate = new Vector3(200, 0, 0);
+
+                    headNodesub.Position = dictOriginalPosition["Head" + i.ToString()];
+
+                    dictnode.Add("Head" + i.ToString(), headNodesub);
+
+                }
+            }
+
             // make sure the camera tracks this node
             // set initial camera position
-            CameraManager.setStyle(CameraStyle.FreeLook);
-            Camera.Position = new Vector3(0, 0, 500);
+            //CameraManager.setStyle(CameraStyle.FreeLook);
+            //Camera.Position = new Vector3(0, 0, 500);
+            //Camera.SetAutoTracking(true, ogreHead1Node, Vector3.Zero);
+
+
+            // set our camera to orbit around the origin and show cursor
+            CameraManager.setStyle(CameraStyle.Orbit);
+            CameraManager.SetYawPitchDist(0, 15, 250);
             Camera.SetAutoTracking(true, ogreHead1Node, Vector3.Zero);
+
 
             // create a scene node to attach the camera to
             SceneNode cameraNode = SceneManager.RootSceneNode.CreateChildSceneNode("CameraNode");
@@ -213,6 +265,7 @@ namespace Axiom.Samples.MousePicking
             this._MouseSelector.SelectionMode = MouseSelector.SelectionModeType.None;
 
             SetupGUI();
+            SetupSlider();
             this.initialized = true;
             base.SetupContent();
         }
@@ -247,6 +300,35 @@ namespace Axiom.Samples.MousePicking
             {
                 this._MouseSelector.SelectionMode = (MouseSelector.SelectionModeType)sender.SelectionIndex;
             }
+        }
+
+        [OgreVersion(1, 7, 2)]
+        protected void SetupSlider()
+        {
+            SampleSliderX = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomX", "zoomX", 250, 80,
+                                                            1, 100, 100);
+            SampleSliderX.SetValue(1, false);
+            SampleSliderX.SliderMoved += new SliderMovedHandler(_slidermoved);
+            SampleSliderY = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomY", "zoomY", 250, 80,
+                                                            1, 100, 100);
+            SampleSliderY.SetValue(1, false);
+            SampleSliderY.SliderMoved += new SliderMovedHandler(_slidermoved);
+            SampleSliderZ = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomZ", "zoomZ", 250, 80,
+                                                          1, 100, 100);
+            SampleSliderZ.SetValue(1, false);
+            SampleSliderZ.SliderMoved += new SliderMovedHandler(_slidermoved);
+        }
+        private void _slidermoved(object sender, Slider slider)
+        {
+            //slider.ValueCaption = slider.Value.ToString();
+
+            foreach (var n in dictnode)
+            {
+                Vector3 np = new Vector3(dictOriginalPosition[n.Key].x * SampleSliderX.Value, dictOriginalPosition[n.Key].y * SampleSliderY.Value, dictOriginalPosition[n.Key].z * SampleSliderZ.Value);
+
+                n.Value.Position = np;
+            }
+
         }
     }
 }

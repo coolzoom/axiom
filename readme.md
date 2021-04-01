@@ -32,3 +32,6 @@ Hotfixes are branched from *default* and exist to fix small bugs that are detect
 
 ### todo
 - why the mediazz woulnt copy to win32zz folder?
+
+### NOTES
+- NEED TO BUILD ALL AFTER CHANGE CODE TO TAKE EFFECT

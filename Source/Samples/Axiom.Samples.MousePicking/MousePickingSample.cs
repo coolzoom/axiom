@@ -62,6 +62,7 @@ namespace Axiom.Samples.MousePicking
         private Slider SampleSliderY;
         private Slider SampleSliderZ;
         private Slider SampleSliderScale;
+        public Label targetObjName;
         private string modelName = "sphere.mesh";
         private Mesh modelMesh ;
         private Vector3 modelSize;
@@ -121,6 +122,15 @@ namespace Axiom.Samples.MousePicking
             {
                 this._MouseSelector.MouseReleased(evt, id);
             }
+            //show selected items
+            //targetObjName.Caption = _MouseSelector.Selection.ToString();
+            string selectedobjs = "";
+            foreach (var o in _MouseSelector.Selection)
+            {
+                selectedobjs += o.Name + " ";
+            }
+            targetObjName.Caption = selectedobjs;
+
             return base.MouseReleased(evt, id);
         }
 
@@ -360,6 +370,8 @@ namespace Axiom.Samples.MousePicking
                                                           1, 100, 100);
             SampleSliderZ.SetValue(1, false);
             SampleSliderZ.SliderMoved += new SliderMovedHandler(_slidermoved);
+
+            targetObjName = TrayManager.CreateLabel(TrayLocation.TopLeft, "TargetObjName", string.Empty, 220);
         }
         private void _slidermoved(object sender, Slider slider)
         {

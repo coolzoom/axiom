@@ -32,7 +32,7 @@ namespace Axiom.RenderSystems.DirectX9
         SizeBox = ThickFrame,
         TiledWindow = OverlappedWindow,
 
-        OverlappedWindow = Overlapped | Caption | SystemMenu | ThickFrame | MinimizeBox | MaximizeBox,
+        OverlappedWindow = Overlapped | Caption | SystemMenu | ThickFrame | MinimizeBox, //coolzoom 20210401 diable MaximizeBox for windowed size due to crash.(not full screen)
         PopupWindow = Popup | Border | SystemMenu,
         ChildWindow = Child,
 

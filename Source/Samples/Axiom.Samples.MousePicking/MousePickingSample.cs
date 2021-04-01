@@ -179,15 +179,25 @@ namespace Axiom.Samples.MousePicking
             //SceneManager.SetSkyDome(true, "Examples/CloudySky", 5, 8);
 
 
-            SceneManager.SetSkyBox(true, "Examples/NebulaSkyBox", 5000);
+            SceneManager.SetSkyBox(true, "Examples/NebulaSkyBox", 500);
 
             // setup some basic lighting for our scene
             //SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
             SceneManager.CreateLight("ParticleSampleLight").Position = new Vector3(0, 0, 0);
 
-            // create a simple default point light
-            Light light = SceneManager.CreateLight("MainLight");
-            light.Position = new Vector3(20, 80, 50);
+            //// create a simple default point light
+            //Light light = SceneManager.CreateLight("MainLight");
+            //light.Position = new Vector3(20, 80, 50);
+
+            // dim orange ambient and two bright orange lights to match the skybox
+            SceneManager.AmbientLight = new ColorEx(0.3f, 0.2f, 0.0f);
+            Light light = SceneManager.CreateLight("LightA");
+            light.Position = new Vector3(2000, 1000, -1000);
+            light.Diffuse = new ColorEx(1.0f, 0.5f, 0.0f);
+            light = SceneManager.CreateLight("LightB");
+            light.Position = new Vector3(2000, 1000, 1000);
+            light.Diffuse = new ColorEx(1.0f, 0.5f, 0.0f);
+
 
             // create a plane for the plane mesh
             var plane = new Plane();
@@ -223,7 +233,7 @@ namespace Axiom.Samples.MousePicking
             ogreHead3Node = SceneManager.RootSceneNode.CreateChildSceneNode("OgreHead3Node", new Vector3(+100, 0, 0),
                                                                              Quaternion.Identity);
             ogreHead3Node.AttachObject(ogreHead3);
-
+            
             //temp entity to get meshsize 
             Entity headsub = SceneManager.CreateEntity("Head", modelName);
             modelMesh = headsub.Mesh;
@@ -279,6 +289,11 @@ namespace Axiom.Samples.MousePicking
                     headsub.MaterialName = "Examples/GreenSkin";
 
                     Vector3 v = new Vector3(y, z, x);
+
+                    // setup some basic lighting for our scene
+                    //SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
+                    //SceneManager.CreateLight("Light" + i.ToString()).Position = v;
+
                     dictOriginalPosition.Add("Head" + i.ToString(), v);
                     SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
                     headNodesub.AttachObject(headsub);
@@ -287,7 +302,7 @@ namespace Axiom.Samples.MousePicking
                     //headNodesub.ScaleBy(new Vector3(1 / modelSize.x * SampleSliderScale.Value,
                     //                                1 / modelSize.y * SampleSliderScale.Value,
                     //                                1 / modelSize.z * SampleSliderScale.Value));
-
+                    
                     headNodesub.Position = dictOriginalPosition["Head" + i.ToString()];
 
                     dictnode.Add("Head" + i.ToString(), headNodesub);

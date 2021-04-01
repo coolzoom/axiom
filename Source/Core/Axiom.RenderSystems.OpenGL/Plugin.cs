@@ -2,7 +2,7 @@
 
 /*
 Axiom Graphics Engine Library
-Copyright © 2003-2011 Axiom Project Team
+Copyright ?2003-2011 Axiom Project Team
 
 The overall design, and a majority of the core engine and rendering code
 contained within this library is a derivative of the open source Object Oriented
@@ -71,7 +71,7 @@ namespace Axiom.RenderSystems.OpenGL
 
             this._renderSystem = new GLRenderSystem();
             // add an instance of this plugin to the list of available RenderSystems
-            Root.Instance.RenderSystems.Add("OpenGL", this._renderSystem);
+            //Root.Instance.RenderSystems.Add("OpenGL", this._renderSystem);
         }
 
         public void Shutdown()

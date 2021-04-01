@@ -6440,7 +6440,7 @@ namespace Axiom.Core
         /// </summary>
         /// <remarks>
         ///		<p>
-        ///		Note that since directional lights have no position, they are always considered
+       ///		Note that since directional lights have no position, they are always considered
         ///		closer than any point lights and as such will always take precedence.
         ///		</p>
         ///		<p>

@@ -102,6 +102,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Thumbnails\thumb_triangle.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Thumbnails\thumb_voltex.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Thumbnails\thumb_water.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Materials\Textures\Panels_Diffuse.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Content\Icons\files.manifest" />
@@ -249,5 +250,10 @@
     <None Include="$(MSBuildThisFileDirectory)Content\SdkTrays\Overlays\files.manifest" />
     <None Include="$(MSBuildThisFileDirectory)Content\SdkTrays\Overlays\SdkTrays.overlay" />
     <None Include="$(MSBuildThisFileDirectory)Content\Thumbnails\files.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Content\Materials\Scripts\RTShaderSystem.material">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
 </Project>

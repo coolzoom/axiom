@@ -43,7 +43,7 @@ namespace Axiom.Samples
         [STAThread]
         private static void Main()
         {
-            try
+            //try
             {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US", false);
                 using (var sb = new SampleBrowserZZ()) //using (var sb = new SampleBrowser())
@@ -51,11 +51,11 @@ namespace Axiom.Samples
                     sb.Go();
                 }
             }
-            catch (Exception ex)
-            {
-                IErrorDialog messageBox = new WinFormErrorDialog();
-                messageBox.Show(ex);
-            }
+            //catch (Exception ex)
+            //{
+            //    IErrorDialog messageBox = new WinFormErrorDialog();
+            //    messageBox.Show(ex);
+            //}
         }
     }
 }

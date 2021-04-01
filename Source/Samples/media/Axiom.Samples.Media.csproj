@@ -19,6 +19,7 @@
   <ItemGroup>
     <None Remove="media\Materials\GreenSkin.material" />
     <None Remove="media\Materials\NebulaSkyBox.material" />
+    <None Remove="media\Materials\RTShaderSystem.material" />
     <None Remove="media\Textures\Green.jpg" />
   </ItemGroup>
 
@@ -106,6 +107,10 @@
     </Content>
     <Content Include="media\Materials\Rockwall.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="media\Materials\RTShaderSystem.material">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="media\Materials\SceneCubeMap2.material">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -654,6 +659,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="media\Textures\growth_weirdfungus-03_normalheight.dds">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="media\Textures\Panels_Diffuse.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="media\Textures\terrain.png">

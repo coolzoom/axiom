@@ -476,7 +476,7 @@ namespace Axiom.Samples.MousePicking
         {
 
             System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            openFileDialog.InitialDirectory = "c:\\";//注意这里写路径时要用c:\\而不是c:\
+            openFileDialog.InitialDirectory = "c:\\";
             openFileDialog.Filter = "csv|*.csv";
             openFileDialog.RestoreDirectory = true;
             openFileDialog.FilterIndex = 1;
@@ -499,26 +499,17 @@ namespace Axiom.Samples.MousePicking
             saveFileDialog.Filter = "Excel(*.xlsx)|*.xlsx";
             saveFileDialog.FilterIndex = 1;
             saveFileDialog.RestoreDirectory = true;
-            //设置是否允许多选
-
-            //按下确定选择的按钮
+ 
             if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                //获得文件路径
+
                 string localFilePath = saveFileDialog.FileName.ToString();
                 ExportToExcel(ds, localFilePath);
                 System.Windows.Forms.MessageBox.Show("Done!");
-                //获取文件路径，不带文件名
+
                 FileInfo fi = new FileInfo(localFilePath);
                 Process.Start(fi.DirectoryName);
-                ////获取文件名，带后缀名，不带路径
-                //string fileNameWithSuffix = localFilePath.Substring(localFilePath.LastIndexOf("\\") + 1);
-                ////去除文件后缀名
-                //string fileNameWithoutSuffix = fileNameWithSuffix.Substring(0, fileNameWithSuffix.LastIndexOf("."));
-                ////在文件名前加上时间
-                //string fileNameWithTime = DateTime.Now.ToString("yyyy-MM-dd ") + fileNameExt;
-                ////在文件名里加字符
-                //string newFileName = localFilePath.Insert(1, "Tets");
+
             }
         }
 

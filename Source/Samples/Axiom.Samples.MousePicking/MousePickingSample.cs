@@ -94,7 +94,9 @@ namespace Axiom.Samples.MousePicking
         private Vector3 modelSize;
         private EntityList targetEntities;
         private Entity layeredBlendingEntity;
+        private Button SampleLoadButton;
         private Button SampleSaveButton;
+        private TextBox SampleH12Limit;
         private System.Data.DataSet ds;
         private System.Data.DataTable dtRaw;
         /// <summary>
@@ -205,7 +207,11 @@ namespace Axiom.Samples.MousePicking
         protected override void SetupContent()
         {
             // set some ambient light
-            SceneManager.AmbientLight = new ColorEx(1.0f, 0.2f, 0.2f, 0.2f);
+            //SceneManager.AmbientLight = new ColorEx(1.0f, 0.2f, 0.2f, 0.2f);
+            // setup some basic lighting for our scene
+            SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
+            SceneManager.CreateLight("CameraTrackLight").Position = new Vector3(20, 80, 50);
+
 
             // create a skydome
             //SceneManager.SetSkyDome(true, "Examples/CloudySky", 5, 8);
@@ -216,7 +222,7 @@ namespace Axiom.Samples.MousePicking
             reflectionMapSubRS = null;
             reflectionMapEnable = false;
 
-            SceneManager.SetSkyBox(true, "Examples/NebulaSkyBox", 500);
+            SceneManager.SetSkyBox(true, "Examples/NebulaSkyBox", 500); //Examples/MorningSkyBox
 
             // setup some basic lighting for our scene
             //SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
@@ -227,7 +233,6 @@ namespace Axiom.Samples.MousePicking
             //light.Position = new Vector3(20, 80, 50);
 
             // dim orange ambient and two bright orange lights to match the skybox
-            SceneManager.AmbientLight = new ColorEx(0.3f, 0.2f, 0.0f);
             Light light = SceneManager.CreateLight("LightA");
             light.Position = new Vector3(2000, 1000, -1000);
             light.Diffuse = new ColorEx(1.0f, 0.5f, 0.0f);
@@ -356,7 +361,8 @@ namespace Axiom.Samples.MousePicking
 
             ds = new System.Data.DataSet();
             
-            SetupScatterPoint();
+            //default data
+            SetupScatterPoint("C:\\Users\\Administrator\\Desktop\\data.csv");
             this.initialized = true;
             base.SetupContent();
 
@@ -364,7 +370,7 @@ namespace Axiom.Samples.MousePicking
         }
 
 
-        private void SetupScatterPoint()
+        private void SetupScatterPoint(string filename)
         {
             //if not empty
             if (dictnode != null)
@@ -381,14 +387,14 @@ namespace Axiom.Samples.MousePicking
                     SceneManager.RemoveEntity(e.Value);
                 }
             }
-
+            ds = new System.Data.DataSet();
             dtRaw = new System.Data.DataTable();
             dtRaw.TableName = "RAW";
             dtRaw.Columns.Add("id");
             dtRaw.Columns.Add("x");
             dtRaw.Columns.Add("y");
             dtRaw.Columns.Add("z");
-            string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv");
+            string[] content = File.ReadAllLines(filename); //File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv")
 
             dictnode = new Dictionary<string, SceneNode> { };
             dictentity = new Dictionary<string, Entity> { };
@@ -404,14 +410,13 @@ namespace Axiom.Samples.MousePicking
                     float z = float.Parse(l[2]) * 10000;
                     dtRaw.Rows.Add(i, l[0], l[1], l[2]);
                     StatusLabel.Caption = "Loading " + i.ToString() + " of " + content.Length.ToString() + " items";
-                    Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), modelName);
+                    Entity headsub = SceneManager.CreateEntity("node" + i.ToString(), modelName);
                     headsub.MaterialName = "Examples/GreenSkin";
                     targetEntities.Add(headsub);
                     Vector3 v = new Vector3(y, z, x);
 
-                    // setup some basic lighting for our scene
-                    //SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
-                    //SceneManager.CreateLight("Light" + i.ToString()).Position = v;
+                   //setup some basic lighting for our scene
+                   //SceneManager.CreateLight("Light" + i.ToString()).Position = v;
 
                     dictOriginalPosition.Add("node" + i.ToString(), v);
                     SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
@@ -761,10 +766,34 @@ namespace Axiom.Samples.MousePicking
             //                                                "Reflection Power", 240, 80, 0, 1, 100);
             //this.reflectionPowerSlider.SetValue(0.5f, false);
             //this.reflectionPowerSlider.SliderMoved += new SliderMovedHandler(SliderMoved);
-
+            SampleLoadButton = TrayManager.CreateButton(TrayLocation.TopLeft, "LoadCSV", "Load");
+            SampleLoadButton.CursorPressed += new CursorPressedHandler(buttonload);
 
             SampleSaveButton = TrayManager.CreateButton(TrayLocation.TopLeft, "SaveExcel", "Save");
             SampleSaveButton.CursorPressed += new CursorPressedHandler(buttonpress);
+
+           
+
+        }
+
+        private void buttonload(object sender, Vector2 cursorPosition)
+        {
+
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog.InitialDirectory = "c:\\";//注意这里写路径时要用c:\\而不是c:\
+            openFileDialog.Filter = "csv|*.csv";
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.FilterIndex = 1;
+
+            DialogResult result = openFileDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                string fName = openFileDialog.FileName;
+                if (File.Exists(fName))
+                {
+                    SetupScatterPoint(fName);
+                }
+            }
         }
 
         private void buttonpress(object sender, Vector2 cursorPosition)

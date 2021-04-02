@@ -247,19 +247,16 @@ namespace Axiom.Samples.MousePicking
             //childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
             //childNode.Position = new Vector3(300, 200, -200);
             //childNode.AttachObject(this.layeredBlendingEntity);
-            //// create a plane for the plane mesh
-            //var plane = new Plane();
-            //plane.Normal = Vector3.UnitY;
-            //plane.D = 200;
 
-            //// create a plane mesh
-            //MeshManager.Instance.CreatePlane("FloorPlane", ResourceGroupManager.DefaultResourceGroupName, plane, 200000, 200000,
-            //                                  20, 20, true, 1, 50, 50, Vector3.UnitZ);
 
-            //// create an entity to reference this mesh
-            //Entity planeEntity = SceneManager.CreateEntity("Floor", "FloorPlane");
-            //planeEntity.MaterialName = "Examples/RustySteel";
-            //SceneManager.RootSceneNode.CreateChildSceneNode().AttachObject(planeEntity);
+            //MeshManager.Instance.CreatePlane("Myplane", ResourceGroupManager.DefaultResourceGroupName,
+            //                                  new Plane(Vector3.UnitY, -100),
+            //                                  1500, 1500, 25, 25, true, 1, 60, 60, Vector3.UnitZ);
+
+            //Entity planeEnt = SceneManager.CreateEntity("plane", "Myplane");
+            //planeEnt.MaterialName = "Examples/Rockwall";
+            //planeEnt.CastShadows = false;
+            //SceneManager.RootSceneNode.CreateChildSceneNode(Vector3.Zero).AttachObject(planeEnt);
 
             // create an entity to have follow the path
             Entity ogreHead = SceneManager.CreateEntity("OgreHead", "ogrehead.mesh");
@@ -405,9 +402,9 @@ namespace Axiom.Samples.MousePicking
                 if (l.Length == 3)
                 {
 
-                    float x = float.Parse(l[0]) * 100;
-                    float y = float.Parse(l[1]) * 100;
-                    float z = float.Parse(l[2]) * 10000;
+                    float x = float.Parse(l[0]) * 10;
+                    float y = float.Parse(l[1]) * 10;
+                    float z = float.Parse(l[2]) * 1000;
                     dtRaw.Rows.Add(i, l[0], l[1], l[2]);
                     StatusLabel.Caption = "Loading " + i.ToString() + " of " + content.Length.ToString() + " items";
                     Entity headsub = SceneManager.CreateEntity("node" + i.ToString(), modelName);
@@ -736,8 +733,8 @@ namespace Axiom.Samples.MousePicking
         protected void SetupSlider()
         {
             SampleSliderScale = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "modelscale", "modelscale", 250, 80,
-                                                0.1, 10, 100);
-            SampleSliderScale.SetValue(0.3, false);
+                                                0.01, 1, 10000);
+            SampleSliderScale.SetValue(0.1, false);
             SampleSliderScale.SliderMoved += new SliderMovedHandler(_slidermoved);
 
             SampleSliderX = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "zoomX", "zoomX", 250, 80,

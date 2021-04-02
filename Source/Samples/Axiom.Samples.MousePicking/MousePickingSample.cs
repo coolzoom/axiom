@@ -34,7 +34,6 @@ using Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using System;
 using System.Diagnostics;
-using SIS = SharpInputSystem;
 
 namespace Axiom.Samples.MousePicking
 {
@@ -43,23 +42,7 @@ namespace Axiom.Samples.MousePicking
     /// </summary>
     public class MousePickingSample : SdkSample
     {
-        private enum ShaderSystemLightingModel
-        {
-            PerVertexLighting,
-            PerPixelLighting,
-            NormalMapLightingTangentSpace,
-            NormalMapLightingObjectSpace
-        }
-        private ShaderSystemLightingModel curLightingModel;
-        private SubRenderState reflectionMapSubRS;
-        private bool reflectionMapEnable;
-        private Slider modifierValueSlider;
-        private Slider reflectionPowerSlider;
-        private const string ReflectionMapPowerSlider = "ReflectionPowerSlider";
-        private const string ModifierValueSlider = "ModifierValueSlider";
-        private const string MainEntityMesh = "sphere.mesh";
-        private const string MainEntityName = "MainEntity";
-        
+
         /// <summary>
         /// safety check for mouse picking sample calls
         /// </summary>
@@ -79,7 +62,7 @@ namespace Axiom.Samples.MousePicking
         /// sample label for displaying mouse coordinates
         /// </summary>
         protected Label MouseLocationLabel;
-
+        private string modelName = "sphere.mesh";
         private Dictionary<string, SceneNode> dictnode;
         private Dictionary<string, Entity> dictentity;
         private Dictionary<string, Vector3> dictOriginalPosition;
@@ -89,11 +72,7 @@ namespace Axiom.Samples.MousePicking
         private Slider SampleSliderScale;
         public Label targetObjName;
         public Label StatusLabel;
-        private string modelName = "sphere.mesh";
-        private Mesh modelMesh ;
-        private Vector3 modelSize;
-        private EntityList targetEntities;
-        private Entity layeredBlendingEntity;
+
         private Button SampleLoadButton;
         private Button SampleSaveButton;
         private TextBox SampleH12Limit;
@@ -104,7 +83,6 @@ namespace Axiom.Samples.MousePicking
         /// </summary>
         public MousePickingSample()
         {
-            this.layeredBlendingEntity = null;
             Metadata["Title"] = "Mouse Picking";
             Metadata["Description"] = "Demonstrates selecting a node with a mouse.";
             Metadata["Thumbnail"] = "thumb_picking.png";
@@ -216,47 +194,7 @@ namespace Axiom.Samples.MousePicking
             // create a skydome
             //SceneManager.SetSkyDome(true, "Examples/CloudySky", 5, 8);
 
-            curLightingModel = ShaderSystemLightingModel.PerVertexLighting;
-            targetEntities = new EntityList();
-            targetEntities.Clear();
-            reflectionMapSubRS = null;
-            reflectionMapEnable = false;
-
             SceneManager.SetSkyBox(true, "Examples/NebulaSkyBox", 500); //Examples/MorningSkyBox
-
-            // setup some basic lighting for our scene
-            //SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
-            SceneManager.CreateLight("ParticleSampleLight").Position = new Vector3(0, 0, 0);
-
-            //// create a simple default point light
-            //Light light = SceneManager.CreateLight("MainLight");
-            //light.Position = new Vector3(20, 80, 50);
-
-            // dim orange ambient and two bright orange lights to match the skybox
-            Light light = SceneManager.CreateLight("LightA");
-            light.Position = new Vector3(2000, 1000, -1000);
-            light.Diffuse = new ColorEx(1.0f, 0.5f, 0.0f);
-            light = SceneManager.CreateLight("LightB");
-            light.Position = new Vector3(2000, 1000, 1000);
-            light.Diffuse = new ColorEx(1.0f, 0.5f, 0.0f);
-
-            ////Create texture layer blending demonstration entity
-            //this.layeredBlendingEntity = SceneManager.CreateEntity("LayeredBlendingMaterialEntity", MainEntityMesh);
-            //this.layeredBlendingEntity.MaterialName = "RTSS/LayeredBlending";
-            //this.layeredBlendingEntity.GetSubEntity(0).SetCustomParameter(2, Vector4.Zero);
-            //childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
-            //childNode.Position = new Vector3(300, 200, -200);
-            //childNode.AttachObject(this.layeredBlendingEntity);
-
-
-            //MeshManager.Instance.CreatePlane("Myplane", ResourceGroupManager.DefaultResourceGroupName,
-            //                                  new Plane(Vector3.UnitY, -100),
-            //                                  1500, 1500, 25, 25, true, 1, 60, 60, Vector3.UnitZ);
-
-            //Entity planeEnt = SceneManager.CreateEntity("plane", "Myplane");
-            //planeEnt.MaterialName = "Examples/Rockwall";
-            //planeEnt.CastShadows = false;
-            //SceneManager.RootSceneNode.CreateChildSceneNode(Vector3.Zero).AttachObject(planeEnt);
 
             // create an entity to have follow the path
             Entity ogreHead = SceneManager.CreateEntity("OgreHead", "ogrehead.mesh");
@@ -267,81 +205,16 @@ namespace Axiom.Samples.MousePicking
             ogreHead1Node = SceneManager.RootSceneNode.CreateChildSceneNode("OgreHeadNode", Vector3.Zero, Quaternion.Identity);
             ogreHead1Node.AttachObject(ogreHead);
 
-            SceneNode ogreHead2Node;
-            Entity ogreHead2 = SceneManager.CreateEntity("OgreHead2", "ogrehead.mesh");
-            ogreHead2Node = SceneManager.RootSceneNode.CreateChildSceneNode("OgreHead2Node", new Vector3(-100, 0, 0),
-                                                                             Quaternion.Identity);
-            ogreHead2Node.AttachObject(ogreHead2);
-
-            SceneNode ogreHead3Node;
-            Entity ogreHead3 = SceneManager.CreateEntity("OgreHead3", "ogrehead.mesh");
-            ogreHead3Node = SceneManager.RootSceneNode.CreateChildSceneNode("OgreHead3Node", new Vector3(+100, 0, 0),
-                                                                             Quaternion.Identity);
-            ogreHead3Node.AttachObject(ogreHead3);
-
-
-            Entity entity;
-            SceneNode childNode;
-
-            //Create the main entity and mark it as the current target object
-            entity = SceneManager.CreateEntity(MainEntityName, MainEntityMesh);
-            this.targetEntities.Add(entity);
-            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
-            childNode.AttachObject(entity);
-            //this.targetObj = entity;
-            childNode.ShowBoundingBox = true;
-
-            //Create reflection entity that will show the exported material.
-            string mainExportedMaterial = SceneManager.GetEntity(MainEntityName).GetSubEntity(0).MaterialName;// + "_RTSS_Export";
-
-            var matMainEnt = (Material)MaterialManager.Instance.GetByName(mainExportedMaterial);
-
-            entity = SceneManager.CreateEntity("ExportedMaterialEntity", MainEntityMesh);
-            entity.GetSubEntity(0).Material = matMainEnt;
-            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
-            childNode.Position = new Vector3(0, 200, -200);
-            childNode.AttachObject(entity);
-
-            //Create texture layer blending demonstration entity
-            this.layeredBlendingEntity = SceneManager.CreateEntity("LayeredBlendingMaterialEntity", MainEntityMesh);
-            this.layeredBlendingEntity.MaterialName = "RTSS/LayeredBlending";
-            this.layeredBlendingEntity.GetSubEntity(0).SetCustomParameter(2, Vector4.Zero);
-            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
-            childNode.Position = new Vector3(300, 200, -200);
-            childNode.AttachObject(this.layeredBlendingEntity);
-
-            //Create per pixel lighting demo entity
-            entity = SceneManager.CreateEntity("PerPixelEntity", "ogrehead.mesh");
-            entity.MaterialName = "RTSS/PerPixel_SinglePass";
-            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
-            childNode.Position = new Vector3(300, 100, -100);
-            childNode.AttachObject(entity);
-
-            //Create normal map lighting demo entity
-            entity = SceneManager.CreateEntity("NormalMapEntity", "ogrehead.mesh");
-            entity.MaterialName = "RTSS/NormalMapping_SinglePass";
-            childNode = SceneManager.RootSceneNode.CreateChildSceneNode();
-            childNode.Position = new Vector3(-300, 100, -100);
-            childNode.AttachObject(entity);
-
-
-            //temp entity to get meshsize 
-            Entity headsub = SceneManager.CreateEntity("Head", modelName);
-            modelMesh = headsub.Mesh;
-            modelSize = modelMesh.BoundingBox.Size;
-
             // make sure the camera tracks this node
             // set initial camera position
             //CameraManager.setStyle(CameraStyle.FreeLook);
             //Camera.Position = new Vector3(0, 0, 500);
             //Camera.SetAutoTracking(true, ogreHead1Node, Vector3.Zero);
 
-
             // set our camera to orbit around the origin and show cursor
             CameraManager.setStyle(CameraStyle.Orbit);
             CameraManager.SetYawPitchDist(0, 15, 250);
             Camera.SetAutoTracking(true, ogreHead1Node, Vector3.Zero);
-
 
             // create a scene node to attach the camera to
             SceneNode cameraNode = SceneManager.RootSceneNode.CreateChildSceneNode("CameraNode");
@@ -363,7 +236,6 @@ namespace Axiom.Samples.MousePicking
             this.initialized = true;
             base.SetupContent();
 
-            UpdateSystemShaders();
         }
 
 
@@ -409,7 +281,7 @@ namespace Axiom.Samples.MousePicking
                     StatusLabel.Caption = "Loading " + i.ToString() + " of " + content.Length.ToString() + " items";
                     Entity headsub = SceneManager.CreateEntity("node" + i.ToString(), modelName);
                     headsub.MaterialName = "Examples/GreenSkin";
-                    targetEntities.Add(headsub);
+
                     Vector3 v = new Vector3(y, z, x);
 
                    //setup some basic lighting for our scene
@@ -542,180 +414,7 @@ namespace Axiom.Samples.MousePicking
 
             TrayManager.ShowCursor();
         }
-        private void UpdateSystemShaders()
-        {
-            foreach (var it in this.targetEntities)
-            {
-                GenerateShaders(it);
-            }
-        }
-        private ShaderSystemLightingModel CurrentLightingModel
-        {
-            get
-            {
-                return this.curLightingModel;
-            }
-            set
-            {
-                if (this.curLightingModel != value)
-                {
-                    this.curLightingModel = value;
-
-                    foreach (var it in this.targetEntities)
-                    {
-                        GenerateShaders(it);
-                    }
-                }
-            }
-        }
-
-        private void GenerateShaders(Entity entity)
-        {
-            for (int i = 0; i < entity.SubEntityCount; i++)
-            {
-                SubEntity curSubEntity = entity.GetSubEntity(i);
-                string curMaterialName = curSubEntity.MaterialName;
-                bool success;
-
-                //Create the shader based technique of this material.
-                success = ShaderGenerator.Instance.CreateShaderBasedTechnique(curMaterialName, MaterialManager.DefaultSchemeName,
-                                                                               ShaderGenerator.DefaultSchemeName, false);
-
-                //Setup custmo shader sub render states according to current setup.
-                if (success)
-                {
-                    var curMaterial = (Material)MaterialManager.Instance.GetByName(curMaterialName);
-                    Pass curPass = curMaterial.GetTechnique(0).GetPass(0);
-
-                    if (true)
-                    {
-                        curPass.Specular = ColorEx.White;
-                        curPass.Shininess = 32;
-                    }
-                    else
-                    {
-                        curPass.Specular = ColorEx.Beige;
-                        curPass.Shininess = 0;
-                    }
-                    // Grab the first pass render state. 
-                    // NOTE: For more complicated samples iterate over the passes and build each one of them as desired.
-                    RenderState renderState = ShaderGenerator.Instance.GetRenderState(ShaderGenerator.DefaultSchemeName,
-                                                                                       curMaterialName, 0);
-
-                    //Remove all sub render states
-                    renderState.Reset();
-
-                    if (this.curLightingModel == ShaderSystemLightingModel.PerVertexLighting)
-                    {
-                        SubRenderState perPerVertexLightModel = ShaderGenerator.Instance.CreateSubRenderState(FFPLighting.FFPType);
-                        renderState.AddTemplateSubRenderState(perPerVertexLightModel);
-                    }
-                    else if (this.curLightingModel == ShaderSystemLightingModel.PerVertexLighting)
-                    {
-                        SubRenderState perPixelLightModel = ShaderGenerator.Instance.CreateSubRenderState(PerPixelLighting.SGXType);
-                        renderState.AddTemplateSubRenderState(perPixelLightModel);
-                    }
-                    else if (this.curLightingModel == ShaderSystemLightingModel.NormalMapLightingTangentSpace)
-                    {
-                        ////Apply normal map only on main entity.
-                        //if (entity.Name == MainEntityName)
-                        //{
-                        //    SubRenderState subRenderState = ShaderGenerator.Instance.CreateSubRenderState(NormalMapLighting.SGXType);
-                        //    var normalMapSubRS = subRenderState as NormalMapLighting;
-
-                        //    normalMapSubRS.NormalMapSpace = NormalMapSpace.Tangent;
-                        //    normalMapSubRS.NormalMapTextureName = "Panels_Normal_Tangent.png";
-                        //    renderState.AddTemplateSubRenderState(normalMapSubRS);
-                        //}
-                        ////It is secondary entity -> use simple per pixel lighting
-                        //else
-                        {
-                            SubRenderState perPixelLightModel = ShaderGenerator.Instance.CreateSubRenderState(PerPixelLighting.SGXType);
-                            renderState.AddTemplateSubRenderState(perPixelLightModel);
-                        }
-                    }
-                    else if (this.curLightingModel == ShaderSystemLightingModel.NormalMapLightingObjectSpace)
-                    {
-                        ////Apply normal map only on main entity
-                        //if (entity.Name == MainEntityName)
-                        //{
-                        //    SubRenderState subRenderState = ShaderGenerator.Instance.CreateSubRenderState(NormalMapLighting.SGXType);
-                        //    var normalMapSubRS = subRenderState as NormalMapLighting;
-
-                        //    normalMapSubRS.NormalMapSpace = NormalMapSpace.Object;
-                        //    normalMapSubRS.NormalMapTextureName = "Panels_Normal_Obj.png";
-
-                        //    renderState.AddTemplateSubRenderState(normalMapSubRS);
-                        //}
-
-                        ////It is secondary entity -> use simple per pixel lighting.
-                        //else
-                        {
-                            SubRenderState perPixelLightModel = ShaderGenerator.Instance.CreateSubRenderState(PerPixelLighting.SGXType);
-                            renderState.AddTemplateSubRenderState(perPixelLightModel);
-                        }
-                    }
-
-                    if (this.reflectionMapEnable)
-                    {
-                        SubRenderState subRenderState = ShaderGenerator.Instance.CreateSubRenderState(ReflectionMap.SGXType);
-                        var reflectMapSubRs = subRenderState as ReflectionMap;
-
-                        reflectMapSubRs.ReflectionMapType = TextureType.CubeMap;
-                        reflectMapSubRs.ReflectionPower = this.reflectionPowerSlider.Value;
-
-                        //Setup the textures needed by the reflection effect
-                        reflectMapSubRs.MaskMapTextureName = "Panels_refmask.png";
-                        reflectMapSubRs.ReflectionMapTextureName = "cubescene.jpg";
-
-                        renderState.AddTemplateSubRenderState(subRenderState);
-                        this.reflectionMapSubRS = subRenderState;
-                    }
-                    else
-                    {
-                        this.reflectionMapSubRS = null;
-                    }
-                    //Invalidate this material in order to regen its shaders
-                    ShaderGenerator.Instance.InvalidateMaterial(ShaderGenerator.DefaultSchemeName, curMaterialName);
-                }
-            }
-        }
-        public void SliderMoved(object sender, Slider slider)
-        {
-            if (slider.Name == ReflectionMapPowerSlider)
-            {
-                Real reflectionPower = slider.Value;
-
-                if (this.reflectionMapSubRS != null)
-                {
-                    var reflectMapSubRS = this.reflectionMapSubRS as ReflectionMap;
-
-                    // Since RTSS export caps based on the template sub render states we have to update the template reflection sub render state.
-                    reflectMapSubRS.ReflectionPower = reflectionPower;
-
-                    // Grab the instances set and update them with the new reflection power value.
-                    // The instances are the actual sub render states that have been assembled to create the final shaders.
-                    // Every time that the shaders have to be re-generated (light changes, fog changes etc..) a new set of sub render states 
-                    // based on the template sub render states assembled for each pass.
-                    // From that set of instances a CPU program is generated and afterward a GPU program finally generated.
-
-                    foreach (var it in this.reflectionMapSubRS.TemplateSubRenderStateList)
-                    {
-                        var reflectionMapInstance = it as ReflectionMap;
-                        reflectionMapInstance.ReflectionPower = reflectionPower;
-                    }
-                }
-            }
-
-            //if (slider.Name == ModifierValueSlider)
-            //{
-            //    if (this.layeredBlendingEntity != null)
-            //    {
-            //        Real val = this.modifierValueSlider.Value;
-            //        this.layeredBlendingEntity.GetSubEntity(0).SetCustomParameter(2, new Vector4(val, val, val, 0));
-            //    }
-            //}
-        }
+     
         /// <summary>
         /// Event for when the menu changes, sets the MouseSelectors SelectionMode
         /// </summary>
@@ -733,7 +432,7 @@ namespace Axiom.Samples.MousePicking
         protected void SetupSlider()
         {
             SampleSliderScale = TrayManager.CreateThickSlider(TrayLocation.TopLeft, "modelscale", "modelscale", 250, 80,
-                                                0.01, 1, 10000);
+                                                0.01, 1, 1000);
             SampleSliderScale.SetValue(0.1, false);
             SampleSliderScale.SliderMoved += new SliderMovedHandler(_slidermoved);
 

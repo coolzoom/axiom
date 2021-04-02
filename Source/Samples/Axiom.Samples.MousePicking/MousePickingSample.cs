@@ -30,6 +30,11 @@ using System.IO;
 using System.Collections.Generic;
 using Axiom.Components.RTShaderSystem;
 using Axiom.Core.Collections;
+using Microsoft.Office.Interop.Excel;
+using System.Windows.Forms;
+using System;
+using System.Diagnostics;
+using SIS = SharpInputSystem;
 
 namespace Axiom.Samples.MousePicking
 {
@@ -54,7 +59,7 @@ namespace Axiom.Samples.MousePicking
         private const string ModifierValueSlider = "ModifierValueSlider";
         private const string MainEntityMesh = "sphere.mesh";
         private const string MainEntityName = "MainEntity";
-
+        
         /// <summary>
         /// safety check for mouse picking sample calls
         /// </summary>
@@ -76,17 +81,22 @@ namespace Axiom.Samples.MousePicking
         protected Label MouseLocationLabel;
 
         private Dictionary<string, SceneNode> dictnode;
+        private Dictionary<string, Entity> dictentity;
         private Dictionary<string, Vector3> dictOriginalPosition;
         private Slider SampleSliderX;
         private Slider SampleSliderY;
         private Slider SampleSliderZ;
         private Slider SampleSliderScale;
         public Label targetObjName;
+        public Label StatusLabel;
         private string modelName = "sphere.mesh";
         private Mesh modelMesh ;
         private Vector3 modelSize;
         private EntityList targetEntities;
         private Entity layeredBlendingEntity;
+        private Button SampleSaveButton;
+        private System.Data.DataSet ds;
+        private System.Data.DataTable dtRaw;
         /// <summary>
         /// Sample initialization
         /// </summary>
@@ -343,6 +353,9 @@ namespace Axiom.Samples.MousePicking
 
             SetupGUI();
             SetupSlider();
+
+            ds = new System.Data.DataSet();
+            
             SetupScatterPoint();
             this.initialized = true;
             base.SetupContent();
@@ -353,9 +366,32 @@ namespace Axiom.Samples.MousePicking
 
         private void SetupScatterPoint()
         {
+            //if not empty
+            if (dictnode != null)
+            {
+                foreach (var n in dictnode)
+                {
+                    SceneManager.DestroySceneNode(n.Value);
+                }
+            }
+            if (dictentity != null)
+            {
+                foreach (var e in dictentity)
+                {
+                    SceneManager.RemoveEntity(e.Value);
+                }
+            }
+
+            dtRaw = new System.Data.DataTable();
+            dtRaw.TableName = "RAW";
+            dtRaw.Columns.Add("id");
+            dtRaw.Columns.Add("x");
+            dtRaw.Columns.Add("y");
+            dtRaw.Columns.Add("z");
             string[] content = File.ReadAllLines("C:\\Users\\Administrator\\Desktop\\data3.csv");
 
             dictnode = new Dictionary<string, SceneNode> { };
+            dictentity = new Dictionary<string, Entity> { };
             dictOriginalPosition = new Dictionary<string, Vector3>();
             for (int i = 1; i < content.Length; i++)
             {
@@ -366,8 +402,8 @@ namespace Axiom.Samples.MousePicking
                     float x = float.Parse(l[0]) * 100;
                     float y = float.Parse(l[1]) * 100;
                     float z = float.Parse(l[2]) * 10000;
-
-
+                    dtRaw.Rows.Add(i, l[0], l[1], l[2]);
+                    StatusLabel.Caption = "Loading " + i.ToString() + " of " + content.Length.ToString() + " items";
                     Entity headsub = SceneManager.CreateEntity("Head" + i.ToString(), modelName);
                     headsub.MaterialName = "Examples/GreenSkin";
                     targetEntities.Add(headsub);
@@ -377,7 +413,7 @@ namespace Axiom.Samples.MousePicking
                     //SceneManager.AmbientLight = new ColorEx(0.3f, 0.3f, 0.3f);
                     //SceneManager.CreateLight("Light" + i.ToString()).Position = v;
 
-                    dictOriginalPosition.Add("Head" + i.ToString(), v);
+                    dictOriginalPosition.Add("node" + i.ToString(), v);
                     SceneNode headNodesub = SceneManager.RootSceneNode.CreateChildSceneNode();
                     headNodesub.AttachObject(headsub);
                     //headNodesub.Translate = new Vector3(200, 0, 0);
@@ -386,14 +422,84 @@ namespace Axiom.Samples.MousePicking
                     //                                1 / modelSize.y * SampleSliderScale.Value,
                     //                                1 / modelSize.z * SampleSliderScale.Value));
                     
-                    headNodesub.Position = dictOriginalPosition["Head" + i.ToString()];
+                    headNodesub.Position = dictOriginalPosition["node" + i.ToString()];
 
-                    dictnode.Add("Head" + i.ToString(), headNodesub);
-                    
+                    dictnode.Add("node" + i.ToString(), headNodesub);
+                    dictentity.Add("node" + i.ToString(), headsub);
+
                 }
             }
 
+            ds.Tables.Add(dtRaw);
         }
+
+
+        public void ExportToExcel(System.Data.DataSet dataSet, string outputPath)
+        {
+            // Create the Excel Application object
+            Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
+            // Create a new Excel Workbook
+            Workbook excelWorkbook = excelApp.Workbooks.Add(Type.Missing);
+            int sheetIndex = 0;
+            int col, row;
+            Worksheet excelSheet;
+            // Copy each DataTable as a new Sheet
+            foreach (System.Data.DataTable dt in dataSet.Tables)
+            {
+                sheetIndex += 1;
+                // Copy the DataTable to an object array
+                object[,] rawData = new object[dt.Rows.Count + 1, dt.Columns.Count - 1 + 1];
+                // Copy the column names to the first row of the object array
+                for (col = 0; col <= dt.Columns.Count - 1; col++)
+                    rawData[0, col] = dt.Columns[col].ColumnName;
+                // Copy the values to the object array
+                for (col = 0; col <= dt.Columns.Count - 1; col++)
+                {
+                    for (row = 0; row <= dt.Rows.Count - 1; row++)
+                        rawData[row + 1, col] = dt.Rows[row].ItemArray[col];
+                }
+                // Calculate the final column letter
+                string finalColLetter = string.Empty;
+                string colCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                int colCharsetLen = colCharset.Length;
+                if (dt.Columns.Count > colCharsetLen)
+                    finalColLetter = colCharset.Substring((dt.Columns.Count - 1) / colCharsetLen - 1, 1);
+                finalColLetter += colCharset.Substring((dt.Columns.Count - 1) % colCharsetLen, 1);
+                // Create a new Sheet
+                excelSheet = (Worksheet)excelWorkbook.Sheets.Add(excelWorkbook.Sheets[sheetIndex], Type.Missing, 1, XlSheetType.xlWorksheet);
+
+
+                // Fast data export to Excel
+                string excelRange = string.Format("A1:{0}{1}", finalColLetter, dt.Rows.Count + 1);
+                // set all to text format
+                // excelSheet.Range(excelRange, Type.Missing).Cells.NumberFormatLocal = "@"
+                excelSheet.Range[excelRange].Value2 = rawData;
+
+                // Mark the first row as BOLD
+                //excelSheet.Rows[1].Font.Bold = true;
+
+                excelSheet.Activate();
+                excelSheet.Application.ActiveWindow.SplitRow = 1;
+                excelSheet.Application.ActiveWindow.FreezePanes = true;
+
+                excelSheet.Name = dt.TableName;
+
+                excelSheet = null/* TODO Change to default(_) if this is not a reference type */;
+            }
+            // Save and Close the Workbook
+            excelWorkbook.SaveAs(outputPath, XlFileFormat.xlOpenXMLWorkbook, Type.Missing, Type.Missing, Type.Missing, Type.Missing, XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            excelWorkbook.Close(true, Type.Missing, Type.Missing);
+            excelWorkbook = null/* TODO Change to default(_) if this is not a reference type */;
+            // Release the Application object
+
+            excelApp.Quit();
+            // excelApp = Nothing
+            // Collect the unreferenced objects
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+     
         //private void AddModelToScene(string modelName)
         //{
         //    this.numberOfModelsAdded++;
@@ -644,18 +750,54 @@ namespace Axiom.Samples.MousePicking
 
             targetObjName = TrayManager.CreateLabel(TrayLocation.TopLeft, "TargetObjName", string.Empty, 220);
 
-            this.modifierValueSlider = TrayManager.CreateThickSlider(TrayLocation.Right, ModifierValueSlider, "Modifier", 240,
-                                                                    80, 0,
-                                                                    1, 100);
-            this.modifierValueSlider.SetValue(0.0f, false);
-            this.modifierValueSlider.SliderMoved += new SliderMovedHandler(SliderMoved);
+            StatusLabel = TrayManager.CreateLabel(TrayLocation.Bottom, "Status", string.Empty, 220);
+            //this.modifierValueSlider = TrayManager.CreateThickSlider(TrayLocation.Right, ModifierValueSlider, "Modifier", 240,
+            //                                                        80, 0,
+            //                                                        1, 100);
+            //this.modifierValueSlider.SetValue(0.0f, false);
+            //this.modifierValueSlider.SliderMoved += new SliderMovedHandler(SliderMoved);
 
-            this.reflectionPowerSlider = TrayManager.CreateThickSlider(TrayLocation.Bottom, ReflectionMapPowerSlider,
-                                                            "Reflection Power", 240, 80, 0, 1, 100);
-            this.reflectionPowerSlider.SetValue(0.5f, false);
-            this.reflectionPowerSlider.SliderMoved += new SliderMovedHandler(SliderMoved);
+            //this.reflectionPowerSlider = TrayManager.CreateThickSlider(TrayLocation.Bottom, ReflectionMapPowerSlider,
+            //                                                "Reflection Power", 240, 80, 0, 1, 100);
+            //this.reflectionPowerSlider.SetValue(0.5f, false);
+            //this.reflectionPowerSlider.SliderMoved += new SliderMovedHandler(SliderMoved);
+
+
+            SampleSaveButton = TrayManager.CreateButton(TrayLocation.TopLeft, "SaveExcel", "Save");
+            SampleSaveButton.CursorPressed += new CursorPressedHandler(buttonpress);
         }
-        private void _slidermoved(object sender, Slider slider)
+
+        private void buttonpress(object sender, Vector2 cursorPosition)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = "Please select output file path";
+            saveFileDialog.Filter = "Excel(*.xlsx)|*.xlsx";
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.RestoreDirectory = true;
+            //设置是否允许多选
+
+            //按下确定选择的按钮
+            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                //获得文件路径
+                string localFilePath = saveFileDialog.FileName.ToString();
+                ExportToExcel(ds, localFilePath);
+                System.Windows.Forms.MessageBox.Show("Done!");
+                //获取文件路径，不带文件名
+                FileInfo fi = new FileInfo(localFilePath);
+                Process.Start(fi.DirectoryName);
+                ////获取文件名，带后缀名，不带路径
+                //string fileNameWithSuffix = localFilePath.Substring(localFilePath.LastIndexOf("\\") + 1);
+                ////去除文件后缀名
+                //string fileNameWithoutSuffix = fileNameWithSuffix.Substring(0, fileNameWithSuffix.LastIndexOf("."));
+                ////在文件名前加上时间
+                //string fileNameWithTime = DateTime.Now.ToString("yyyy-MM-dd ") + fileNameExt;
+                ////在文件名里加字符
+                //string newFileName = localFilePath.Insert(1, "Tets");
+            }
+        }
+
+            private void _slidermoved(object sender, Slider slider)
         {
             //slider.ValueCaption = slider.Value.ToString();
 
